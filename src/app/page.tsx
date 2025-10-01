@@ -22,20 +22,23 @@ const features = [
 const timeline = [
   {
     label: "Capture",
-    detail: "Record a moment in seconds with voice, text, or photo uploads—Nuremento fills in the details for you.",
+    detail:
+      "Record a moment in seconds with voice, text, or photo uploads—Nuremento fills in the details for you.",
   },
   {
     label: "Enrich",
-    detail: "Add prompts, reflections, and connected memories to build a living archive of who you are becoming.",
+    detail:
+      "Add prompts, reflections, and connected memories to build a living archive of who you are becoming.",
   },
   {
     label: "Reflect",
-    detail: "Return to curated memory playlists whenever you need grounding, encouragement, or perspective.",
+    detail:
+      "Return to curated memory playlists whenever you need grounding, encouragement, or perspective.",
   },
 ];
 
 export default async function Home() {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   const primaryCta = userId
     ? { href: "/dashboard", label: "Open your dashboard" }
@@ -55,19 +58,19 @@ export default async function Home() {
           Hold onto every detail that makes your story unique.
         </h1>
         <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
-          Nuremento gives you a calm place to chronicle your memories, add depth with guided prompts, and then revisit them through mindful, conversational experiences.
+          Nuremento gives you a calm place to chronicle your memories, add depth
+          with guided prompts, and then revisit them through mindful,
+          conversational experiences.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             className="rounded-full bg-gradient-to-r from-primary-soft to-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition hover:from-primary hover:to-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            href={primaryCta.href}
-          >
+            href={primaryCta.href}>
             {primaryCta.label}
           </Link>
           <Link
             className="rounded-full border border-primary/30 px-6 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-soft/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-            href={secondaryCta.href}
-          >
+            href={secondaryCta.href}>
             {secondaryCta.label}
           </Link>
         </div>
@@ -79,17 +82,21 @@ export default async function Home() {
             A memory OS crafted for emotional fidelity.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
-            Build a trusted archive that preserves context, sentiment, and personal growth—without the overwhelm of traditional journaling.
+            Build a trusted archive that preserves context, sentiment, and
+            personal growth—without the overwhelm of traditional journaling.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="flex flex-col gap-3 rounded-xl border border-border-muted/70 bg-surface/95 p-8 shadow-soft"
-            >
-              <h3 className="text-lg font-semibold text-text-primary">{feature.title}</h3>
-              <p className="text-sm leading-relaxed text-text-secondary">{feature.description}</p>
+              className="flex flex-col gap-3 rounded-xl border border-border-muted/70 bg-surface/95 p-8 shadow-soft">
+              <h3 className="text-lg font-semibold text-text-primary">
+                {feature.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-text-secondary">
+                {feature.description}
+              </p>
             </article>
           ))}
         </div>
@@ -101,7 +108,8 @@ export default async function Home() {
             Designed for reflection in three simple rhythms.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
-            Let Nuremento capture the details while you stay present—then return any time to explore the stories that shape you.
+            Let Nuremento capture the details while you stay present—then return
+            any time to explore the stories that shape you.
           </p>
         </div>
         <div className="grid gap-6 rounded-xl border border-border-muted/70 bg-surface/95 p-8 shadow-soft md:grid-cols-3">
@@ -110,7 +118,9 @@ export default async function Home() {
               <strong className="text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">
                 {item.label}
               </strong>
-              <span className="text-base font-medium text-text-primary">{item.detail}</span>
+              <span className="text-base font-medium text-text-primary">
+                {item.detail}
+              </span>
             </div>
           ))}
         </div>
@@ -122,7 +132,10 @@ export default async function Home() {
             Private by default, secure by design.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
-            End-to-end safeguards keep your memories protected. Granular controls put you in charge of what is shared and when—and Clerk handles sign-in, session management, and multi-factor flows out of the box.
+            End-to-end safeguards keep your memories protected. Granular
+            controls put you in charge of what is shared and when—and Clerk
+            handles sign-in, session management, and multi-factor flows out of
+            the box.
           </p>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
+import { ensureUserForClerkAccount } from "@/db/users";
 
 const quickActions = [
   { label: "Log a new memory", href: "#" },
@@ -37,6 +38,8 @@ export default async function DashboardPage() {
   if (!user) {
     return null;
   }
+
+  await ensureUserForClerkAccount(user);
 
   const displayName = user.firstName || user.fullName || user.username || "there";
 
