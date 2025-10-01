@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply min-h-screen overflow-x-hidden antialiased;
+}
+
+a {
+  @apply text-inherit no-underline;
+}
+
+.site-shell {
+  @apply flex min-h-screen flex-col;
+}
+
+.site-main {
+  @apply flex-1;
+}
+
+.site-footer {
+  @apply border-t py-12 text-sm backdrop-blur;
+}
+
+.app-container {
+  @apply mx-auto w-full px-6 sm:px-8;
+}
