@@ -4,6 +4,8 @@ import { type FormEvent, useRef, useState } from "react";
 
 import {
   FormImageUpload,
+  FORM_IMAGE_UPLOAD_MAX_IMAGES,
+  FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES,
   type FormImageUploadHandle,
   type FormImageUploadImage,
   type FormImageUploadSelection,
@@ -29,6 +31,19 @@ export function NewMemoryForm() {
 
     const form = event.currentTarget;
     const rawFormData = new FormData(form);
+    const totalBytes = mediaFiles.reduce((sum, item) => sum + item.file.size, 0);
+
+    if (mediaFiles.length > FORM_IMAGE_UPLOAD_MAX_IMAGES) {
+      setError(`You can upload up to ${FORM_IMAGE_UPLOAD_MAX_IMAGES} images.`);
+      return;
+    }
+
+    if (totalBytes > FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES) {
+      setError(
+        `Total image size cannot exceed ${(FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES / 1024 / 1024).toFixed(0)} MB.`
+      );
+      return;
+    }
     const coverImageEntry =
       coverImageId !== null
         ? mediaFiles.find((item) => item.id === coverImageId) ??

@@ -52,12 +52,20 @@ function formatFileSize(bytes: number) {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
+export const FORM_IMAGE_UPLOAD_MAX_IMAGES = 5;
+export const FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES = 20 * 1024 * 1024;
+
+const MAX_IMAGES = FORM_IMAGE_UPLOAD_MAX_IMAGES;
+const MAX_TOTAL_BYTES = FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES;
+
 export const FormImageUpload = forwardRef(function FormImageUpload(
   { label = "Photos", description, onChange }: FormImageUploadProps,
   ref: ForwardedRef<FormImageUploadHandle>
 ) {
   const [images, setImages] = useState<FormImageUploadImage[]>([]);
   const [coverImageId, setCoverImageId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [totalBytes, setTotalBytes] = useState(0);
   const previousImagesRef = useRef<FormImageUploadImage[]>([]);
   const inputId = useId();
 
@@ -68,6 +76,8 @@ export const FormImageUpload = forwardRef(function FormImageUpload(
         return [];
       });
       setCoverImageId(null);
+      setError(null);
+      setTotalBytes(0);
     },
   }));
 
@@ -92,24 +102,72 @@ export const FormImageUpload = forwardRef(function FormImageUpload(
   }, []);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? []).filter((file) =>
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []).filter((file) =>
       file.type.startsWith("image/")
     );
 
     if (files.length === 0) {
-      event.target.value = "";
+      input.value = "";
       return;
     }
 
-    const additions = files.map<FormImageUploadImage>((file) => ({
-      id: createImageId(file),
-      file,
-      previewUrl: URL.createObjectURL(file),
-    }));
+    setImages((current) => {
+      if (current.length >= MAX_IMAGES) {
+        setError(`You can upload up to ${MAX_IMAGES} images. Remove one to add another.`);
+        input.value = "";
+        return current;
+      }
 
-    setImages((current) => [...current, ...additions]);
-    setCoverImageId((current) => current ?? additions[0]?.id ?? null);
-    event.target.value = "";
+      let nextTotal = current.reduce((sum, item) => sum + item.file.size, 0);
+      const spaceLeft = Math.max(0, MAX_IMAGES - current.length);
+      const additions: FormImageUploadImage[] = [];
+      let rejected = false;
+
+      for (const file of files) {
+        if (additions.length >= spaceLeft) {
+          rejected = true;
+          break;
+        }
+
+        if (nextTotal + file.size > MAX_TOTAL_BYTES) {
+          rejected = true;
+          continue;
+        }
+
+        const image = {
+          id: createImageId(file),
+          file,
+          previewUrl: URL.createObjectURL(file),
+        } satisfies FormImageUploadImage;
+
+        additions.push(image);
+        nextTotal += file.size;
+      }
+
+      if (additions.length === 0) {
+        setError(
+          rejected
+            ? `Total image size cannot exceed ${formatFileSize(MAX_TOTAL_BYTES)}. Remove a file or add smaller ones.`
+            : null
+        );
+        input.value = "";
+        return current;
+      }
+
+      const nextImages = [...current, ...additions];
+      setCoverImageId((currentCover) => currentCover ?? additions[0]?.id ?? null);
+      setError(
+        rejected
+          ? `Some files were skipped. You can upload up to ${MAX_IMAGES} images totaling ${formatFileSize(
+              MAX_TOTAL_BYTES
+            )}.`
+          : null
+      );
+      setTotalBytes(nextTotal);
+      input.value = "";
+      return nextImages;
+    });
   }
 
   function handleRemove(id: string) {
@@ -129,6 +187,9 @@ export const FormImageUpload = forwardRef(function FormImageUpload(
         setCoverImageId(next[0]?.id ?? null);
       }
 
+      setTotalBytes(next.reduce((sum, item) => sum + item.file.size, 0));
+      setError(null);
+
       return next;
     });
   }
@@ -144,7 +205,9 @@ export const FormImageUpload = forwardRef(function FormImageUpload(
           {label}
         </label>
         {images.length > 0 ? (
-          <span className="text-xs">{images.length} selected</span>
+          <span className="text-xs">
+            {images.length} selected • {formatFileSize(totalBytes)}
+          </span>
         ) : null}
       </div>
       <input
@@ -156,6 +219,7 @@ export const FormImageUpload = forwardRef(function FormImageUpload(
         className="block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-full file:border file:px-3 file:py-2 file:text-sm file:font-medium focus:outline-none"
       />
       {description ? <p className="text-xs">{description}</p> : null}
+      {error ? <p className="text-xs text-error">{error}</p> : null}
 
       {images.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

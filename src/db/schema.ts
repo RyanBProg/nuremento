@@ -29,8 +29,9 @@ export const users = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
-type MemoryAsset = {
+export type MemoryAsset = {
   key: string;
+  thumbnailKey?: string;
   url?: string;
   caption?: string;
   alt?: string;
