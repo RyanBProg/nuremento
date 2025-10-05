@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme inline {
+  /* css vars go here */
+}
+
 :root {
   color-scheme: light;
 }
@@ -17,7 +21,7 @@ a {
 }
 
 .site-main {
-  @apply flex-1;
+  @apply flex-1 flex;
 }
 
 .site-footer {

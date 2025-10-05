@@ -51,25 +51,25 @@ export default async function Home() {
   return (
     <div className="app-container space-y-16 py-16 md:space-y-20 md:py-24">
       <section className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-        <span className="inline-flex items-center justify-center rounded-full border border-primary/20 bg-primary-soft/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+        <span className="inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
           Your companion for meaningful recall
         </span>
-        <h1 className="text-4xl font-bold tracking-tight text-text-primary sm:text-5xl">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
           Hold onto every detail that makes your story unique.
         </h1>
-        <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
+        <p className="text-base leading-relaxed sm:text-lg">
           Nuremento gives you a calm place to chronicle your memories, add depth
           with guided prompts, and then revisit them through mindful,
           conversational experiences.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
-            className="rounded-full bg-gradient-to-r from-primary-soft to-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition hover:from-primary hover:to-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            className="rounded-full px-6 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2"
             href={primaryCta.href}>
             {primaryCta.label}
           </Link>
           <Link
-            className="rounded-full border border-primary/30 px-6 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-soft/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+            className="rounded-full border px-6 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2"
             href={secondaryCta.href}>
             {secondaryCta.label}
           </Link>
@@ -78,10 +78,10 @@ export default async function Home() {
 
       <section id="features" className="space-y-10">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             A memory OS crafted for emotional fidelity.
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed sm:text-lg">
             Build a trusted archive that preserves context, sentiment, and
             personal growth—without the overwhelm of traditional journaling.
           </p>
@@ -90,13 +90,9 @@ export default async function Home() {
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="flex flex-col gap-3 rounded-xl border border-border-muted/70 bg-surface/95 p-8 shadow-soft">
-              <h3 className="text-lg font-semibold text-text-primary">
-                {feature.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-text-secondary">
-                {feature.description}
-              </p>
+              className="flex flex-col gap-3 rounded-xl border p-8">
+              <h3 className="text-lg font-semibold">{feature.title}</h3>
+              <p className="text-sm leading-relaxed">{feature.description}</p>
             </article>
           ))}
         </div>
@@ -104,23 +100,21 @@ export default async function Home() {
 
       <section id="how-it-works" className="space-y-10">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             Designed for reflection in three simple rhythms.
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed sm:text-lg">
             Let Nuremento capture the details while you stay present—then return
             any time to explore the stories that shape you.
           </p>
         </div>
-        <div className="grid gap-6 rounded-xl border border-border-muted/70 bg-surface/95 p-8 shadow-soft md:grid-cols-3">
+        <div className="grid gap-6 rounded-xl border p-8 md:grid-cols-3">
           {timeline.map((item) => (
             <div key={item.label} className="flex flex-col gap-2 text-left">
-              <strong className="text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">
+              <strong className="text-xs font-semibold uppercase tracking-[0.2em]">
                 {item.label}
               </strong>
-              <span className="text-base font-medium text-text-primary">
-                {item.detail}
-              </span>
+              <span className="text-base font-medium">{item.detail}</span>
             </div>
           ))}
         </div>
@@ -128,10 +122,10 @@ export default async function Home() {
 
       <section id="security" className="space-y-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             Private by default, secure by design.
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-text-secondary sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed sm:text-lg">
             End-to-end safeguards keep your memories protected. Granular
             controls put you in charge of what is shared and when—and Clerk
             handles sign-in, session management, and multi-factor flows out of

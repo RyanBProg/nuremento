@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SiteHeader } from "@/components/site-header";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,10 +41,8 @@ export default function RootLayout({
             <main className="site-main">{children}</main>
             <footer className="site-footer">
               <div className="app-container flex flex-wrap items-center gap-2 text-sm">
-                <strong className="font-semibold text-text-primary">
-                  Nuremento
-                </strong>
-                <span className="text-text-secondary">
+                <strong className="font-semibold">Nuremento</strong>
+                <span>
                   Built for people who want their stories to stay vivid.
                 </span>
               </div>
