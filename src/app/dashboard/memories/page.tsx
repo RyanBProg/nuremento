@@ -1,11 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
-// import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { db } from "@/db/client";
 import { memories } from "@/db/schema";
 import { createSignedUrlForKey } from "@/lib/storage";
+
+import { MemoriesList } from "./MemoriesList";
 
 function formatDate(value: string | Date | null) {
   if (!value) {
@@ -57,6 +58,7 @@ export default async function MemoriesPage() {
     rows.map(async (memory) => ({
       ...memory,
       thumbnailUrl: await resolveThumbnailUrl(memory),
+      occurredOnDisplay: formatDate(memory.occurredOn),
     }))
   );
 
@@ -65,76 +67,11 @@ export default async function MemoriesPage() {
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">Your Memories</h1>
         <p className="text-sm text-muted-foreground">
-          Browse everything you’ve saved. Edit or delete actions are coming
-          soon.
+          Browse, edit, or remove your saved memories.
         </p>
       </header>
 
-      {memoriesWithThumbnails.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-          You haven’t created any memories yet.
-        </div>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {memoriesWithThumbnails.map((memory) => (
-            <article
-              key={memory.id}
-              className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
-              {memory.thumbnailUrl ? (
-                <div className="relative h-48 w-full overflow-hidden">
-                  <img
-                    src={memory.thumbnailUrl}
-                    alt={memory.title}
-                    // fill
-                    className="object-cover"
-                    // sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    // priority={false}
-                  />
-                </div>
-              ) : (
-                <div className="flex h-48 w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                  No photo added
-                </div>
-              )}
-
-              <div className="flex flex-1 flex-col gap-3 p-4">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-medium">{memory.title}</h2>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(memory.occurredOn) as string}
-                    {memory.location ? ` • ${memory.location}` : ""}
-                  </p>
-                  {memory.mood ? (
-                    <p className="text-xs text-muted-foreground">
-                      Mood: {memory.mood}
-                    </p>
-                  ) : null}
-                  {memory.description ? (
-                    <p className="text-sm text-muted-foreground line-clamp-3">
-                      {memory.description}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="mt-auto flex gap-2">
-                  <button
-                    type="button"
-                    className="flex-1 rounded-full border px-3 py-2 text-sm font-medium transition hover:bg-muted"
-                    disabled>
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="flex-1 rounded-full border border-destructive px-3 py-2 text-sm font-medium text-destructive transition hover:bg-destructive/10"
-                    disabled>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+      <MemoriesList initialMemories={memoriesWithThumbnails} />
     </div>
   );
 }
