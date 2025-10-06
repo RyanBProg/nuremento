@@ -3,7 +3,6 @@ import {
   date,
   foreignKey,
   index,
-  jsonb,
   pgTable,
   text,
   timestamp,
@@ -29,14 +28,6 @@ export const users = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
-export type MemoryAsset = {
-  key: string;
-  thumbnailKey?: string;
-  url?: string;
-  caption?: string;
-  alt?: string;
-};
-
 export const memories = pgTable(
   "memories",
   {
@@ -49,12 +40,8 @@ export const memories = pgTable(
     occurredOn: date("occurred_on"),
     location: text("location"),
     mood: text("mood"),
-    coverImageKey: text("cover_image_key"),
-    coverImageUrl: text("cover_image_url"),
-    media: jsonb("media")
-      .$type<MemoryAsset[]>()
-      .notNull()
-      .default(sql`'[]'::jsonb`),
+    imageKey: text("image_key"),
+    imageThumbnailKey: text("image_thumbnail_key"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

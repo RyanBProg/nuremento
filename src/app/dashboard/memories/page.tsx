@@ -1,9 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-
 import { db } from "@/db/client";
-import { memories, type MemoryAsset } from "@/db/schema";
+import { memories } from "@/db/schema";
 import { createSignedUrlForKey } from "@/lib/storage";
 
 function formatDate(value: string | Date | null) {
@@ -24,23 +23,15 @@ function formatDate(value: string | Date | null) {
   }).format(date);
 }
 
-async function resolveCoverThumbnailUrl(memory: typeof memories.$inferSelect) {
-  if (!memory.coverImageKey) {
-    return null;
-  }
+async function resolveThumbnailUrl(memory: typeof memories.$inferSelect) {
+  const key = memory.imageThumbnailKey ?? memory.imageKey;
 
-  const coverAsset = (memory.media as MemoryAsset[]).find(
-    (asset) => asset.key === memory.coverImageKey,
-  );
-
-  const thumbnailKey = coverAsset?.thumbnailKey ?? coverAsset?.key;
-
-  if (!thumbnailKey) {
+  if (!key) {
     return null;
   }
 
   try {
-    return await createSignedUrlForKey(thumbnailKey);
+    return await createSignedUrlForKey(key);
   } catch (error) {
     console.error("Failed to create signed URL for thumbnail", error);
     return null;
@@ -63,8 +54,8 @@ export default async function MemoriesPage() {
   const memoriesWithThumbnails = await Promise.all(
     rows.map(async (memory) => ({
       ...memory,
-      thumbnailUrl: await resolveCoverThumbnailUrl(memory),
-    })),
+      thumbnailUrl: await resolveThumbnailUrl(memory),
+    }))
   );
 
   return (
@@ -72,7 +63,8 @@ export default async function MemoriesPage() {
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">Your Memories</h1>
         <p className="text-sm text-muted-foreground">
-          Browse everything you’ve saved. Edit or delete actions are coming soon.
+          Browse everything you’ve saved. Edit or delete actions are coming
+          soon.
         </p>
       </header>
 
@@ -85,8 +77,7 @@ export default async function MemoriesPage() {
           {memoriesWithThumbnails.map((memory) => (
             <article
               key={memory.id}
-              className="flex flex-col overflow-hidden rounded-lg border shadow-sm"
-            >
+              className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
               {memory.thumbnailUrl ? (
                 <img
                   src={memory.thumbnailUrl}
@@ -103,11 +94,13 @@ export default async function MemoriesPage() {
                 <div className="space-y-1">
                   <h2 className="text-lg font-medium">{memory.title}</h2>
                   <p className="text-xs text-muted-foreground">
-                    {formatDate(memory.occurredOn)}
+                    {formatDate(memory.occurredOn) as string}
                     {memory.location ? ` • ${memory.location}` : ""}
                   </p>
                   {memory.mood ? (
-                    <p className="text-xs text-muted-foreground">Mood: {memory.mood}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Mood: {memory.mood}
+                    </p>
                   ) : null}
                   {memory.description ? (
                     <p className="text-sm text-muted-foreground line-clamp-3">
@@ -120,15 +113,13 @@ export default async function MemoriesPage() {
                   <button
                     type="button"
                     className="flex-1 rounded-full border px-3 py-2 text-sm font-medium transition hover:bg-muted"
-                    disabled
-                  >
+                    disabled>
                     Edit
                   </button>
                   <button
                     type="button"
                     className="flex-1 rounded-full border border-destructive px-3 py-2 text-sm font-medium text-destructive transition hover:bg-destructive/10"
-                    disabled
-                  >
+                    disabled>
                     Delete
                   </button>
                 </div>

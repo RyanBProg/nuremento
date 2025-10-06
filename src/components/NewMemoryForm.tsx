@@ -1,113 +1,131 @@
 "use client";
 
-import { type FormEvent, useRef, useState } from "react";
+import { ChangeEvent, type FormEvent, useRef, useState } from "react";
 
-import {
-  FormImageUpload,
-  FORM_IMAGE_UPLOAD_MAX_IMAGES,
-  FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES,
-  type FormImageUploadHandle,
-  type FormImageUploadImage,
-  type FormImageUploadSelection,
-} from "./FormImageUpload";
+import MemoryImageUpload from "./MemoryImageUpload";
+
+export type FormImageUploadImage = {
+  file: File;
+  previewUrl: string;
+};
+
+const emptyForm = {
+  title: "",
+  description: "",
+  date: "",
+  location: "",
+  mood: "",
+};
 
 export function NewMemoryForm() {
-  const uploadRef = useRef<FormImageUploadHandle | null>(null);
-  const [mediaFiles, setMediaFiles] = useState<FormImageUploadImage[]>([]);
-  const [coverImageId, setCoverImageId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [imageFile, setImageFile] = useState<FormImageUploadImage | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState(emptyForm);
 
-  function handleImagesChange(selection: FormImageUploadSelection) {
-    setMediaFiles(selection.images);
-    setCoverImageId(selection.coverImageId);
-  }
+  const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Only image files are supported.");
+      input.value = "";
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError("Image size too large. Please choose one up to 10MB.");
+      input.value = "";
+      return;
+    }
+
+    setError(null);
+
+    setImageFile((current) => {
+      if (current) {
+        URL.revokeObjectURL(current.previewUrl);
+      }
+
+      return {
+        file,
+        previewUrl: URL.createObjectURL(file),
+      } satisfies FormImageUploadImage;
+    });
+  };
+
+  const handleRemoveImage = () => {
+    if (imageFile) {
+      URL.revokeObjectURL(imageFile.previewUrl);
+      setImageFile(null);
+    }
+
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setSuccess(false);
 
-    const form = event.currentTarget;
-    const rawFormData = new FormData(form);
-    const totalBytes = mediaFiles.reduce((sum, item) => sum + item.file.size, 0);
-
-    if (mediaFiles.length > FORM_IMAGE_UPLOAD_MAX_IMAGES) {
-      setError(`You can upload up to ${FORM_IMAGE_UPLOAD_MAX_IMAGES} images.`);
-      return;
-    }
-
-    if (totalBytes > FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES) {
-      setError(
-        `Total image size cannot exceed ${(FORM_IMAGE_UPLOAD_MAX_TOTAL_BYTES / 1024 / 1024).toFixed(0)} MB.`
-      );
-      return;
-    }
-    const coverImageEntry =
-      coverImageId !== null
-        ? mediaFiles.find((item) => item.id === coverImageId) ??
-          mediaFiles[0] ??
-          null
-        : mediaFiles[0] ?? null;
-
-    const metadata = {
-      title: rawFormData.get("title")?.toString().trim() ?? "",
-      description: rawFormData.get("description")?.toString().trim() || null,
-      occurredOn: rawFormData.get("occurredOn")?.toString() || null,
-      location: rawFormData.get("location")?.toString().trim() || null,
-      mood: rawFormData.get("mood")?.toString().trim() || null,
-      coverImageKey: coverImageEntry ? coverImageEntry.file.name : null,
-      coverImageUrl: null,
-      media: mediaFiles.map((item) => ({
-        key: item.file.name,
-      })),
-    };
-
-    if (!metadata.title) {
+    const trimmedTitle = formData.title.trim();
+    if (!trimmedTitle) {
       setError("Please give this memory a title.");
       return;
     }
 
-    const submission = new FormData();
-    submission.append("metadata", JSON.stringify(metadata));
-    submission.append("title", metadata.title);
-    if (metadata.description) {
-      submission.append("description", metadata.description);
+    const trimmedDescription = formData.description.trim();
+    if (!trimmedDescription) {
+      setError("Please describe this memory.");
+      return;
     }
-    if (metadata.occurredOn) {
-      submission.append("occurredOn", metadata.occurredOn);
-    }
-    if (metadata.location) {
-      submission.append("location", metadata.location);
-    }
-    if (metadata.mood) {
-      submission.append("mood", metadata.mood);
-    }
-    if (coverImageEntry) {
-      submission.append("coverImageFileName", coverImageEntry.file.name);
-    }
-
-    mediaFiles.forEach((item) => {
-      submission.append("mediaFiles", item.file, item.file.name);
-    });
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/memories", {
+      const metadata = {
+        title: trimmedTitle,
+        description: trimmedDescription,
+        occurredOn: formData.date || null,
+        location: formData.location.trim() || null,
+        mood: formData.mood.trim() || null,
+      };
+
+      const submission = new FormData();
+      submission.append("metadata", JSON.stringify(metadata));
+
+      if (imageFile) {
+        submission.append("image", imageFile.file, imageFile.file.name);
+      }
+
+      const res = await fetch("/api/memories", {
         method: "POST",
         body: submission,
       });
 
-      if (!response.ok) {
+      if (!res.ok) {
         throw new Error("Request failed");
       }
 
-      uploadRef.current?.reset();
-      setMediaFiles([]);
-      setCoverImageId(null);
-      form.reset();
+      if (imageFile) {
+        URL.revokeObjectURL(imageFile.previewUrl);
+      }
+
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
+
+      setImageFile(null);
+      setFormData(emptyForm);
       setSuccess(true);
     } catch (err) {
       console.error(err);
@@ -128,6 +146,10 @@ export function NewMemoryForm() {
           name="title"
           type="text"
           required
+          value={formData.title}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, title: e.target.value }))
+          }
           className="rounded-md border  bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
           placeholder="Give your memory a name"
         />
@@ -141,6 +163,11 @@ export function NewMemoryForm() {
           id="description"
           name="description"
           rows={4}
+          required
+          value={formData.description}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, description: e.target.value }))
+          }
           className="rounded-md border  bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
           placeholder="Write about the moment"
         />
@@ -154,6 +181,10 @@ export function NewMemoryForm() {
           id="occurredOn"
           name="occurredOn"
           type="date"
+          value={formData.date}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, date: e.target.value }))
+          }
           className="rounded-md border  bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
         />
         <p className="text-xs">
@@ -170,6 +201,10 @@ export function NewMemoryForm() {
           id="location"
           name="location"
           type="text"
+          value={formData.location}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, location: e.target.value }))
+          }
           className="rounded-md border  bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
           placeholder="Where were you?"
         />
@@ -183,16 +218,22 @@ export function NewMemoryForm() {
           id="mood"
           name="mood"
           type="text"
+          value={formData.mood}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, mood: e.target.value }))
+          }
           className="rounded-md border  bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
           placeholder="How did it feel?"
         />
       </div>
 
-      <FormImageUpload
-        ref={uploadRef}
+      <MemoryImageUpload
         label="Photos (optional)"
         description="Upload JPG, PNG, or HEIC files. They stay on your device until you submit."
-        onChange={handleImagesChange}
+        imageFile={imageFile}
+        handleImageUpload={handleImageUpload}
+        handleRemoveImage={handleRemoveImage}
+        imageInputRef={imageInputRef}
       />
 
       {error ? (
