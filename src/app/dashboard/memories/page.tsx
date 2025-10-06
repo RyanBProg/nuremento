@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
+// import Image from "next/image";
 import { redirect } from "next/navigation";
+
 import { db } from "@/db/client";
 import { memories } from "@/db/schema";
 import { createSignedUrlForKey } from "@/lib/storage";
@@ -79,14 +81,19 @@ export default async function MemoriesPage() {
               key={memory.id}
               className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
               {memory.thumbnailUrl ? (
-                <img
-                  src={memory.thumbnailUrl}
-                  alt={memory.title}
-                  className="h-48 w-full object-cover"
-                />
+                <div className="relative h-48 w-full overflow-hidden">
+                  <img
+                    src={memory.thumbnailUrl}
+                    alt={memory.title}
+                    // fill
+                    className="object-cover"
+                    // sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    // priority={false}
+                  />
+                </div>
               ) : (
                 <div className="flex h-48 w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                  No cover photo
+                  No photo added
                 </div>
               )}
 
