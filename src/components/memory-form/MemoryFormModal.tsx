@@ -258,7 +258,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
             <button
               type="button"
               onClick={closeModal}
-              className="absolute right-4 top-4 text-sm text-muted-foreground transition hover:text-black"
+              className="absolute right-4 top-4 text-sm text-neutral-600 transition hover:text-black"
               aria-label="Close">
               ✕
             </button>
@@ -266,7 +266,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
             <h2 className="text-xl font-semibold">
               {isEditing ? "Edit memory" : "Log a new memory"}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-neutral-600">
               {isEditing
                 ? "Update the details below and save your changes."
                 : "Capture the moment while it is still fresh."}

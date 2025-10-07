@@ -120,7 +120,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
       ) : null}
 
       {mappedMemories.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-neutral-600">
           You haven’t created any memories yet.
         </div>
       ) : (
@@ -143,7 +143,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                     />
                   </div>
                 ) : (
-                  <div className="flex h-48 w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                  <div className="flex h-48 w-full items-center justify-center bg-muted text-sm text-neutral-600">
                     No photo added
                   </div>
                 )}
@@ -151,19 +151,19 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                 <div className="flex flex-1 flex-col gap-3 p-4">
                   <div className="space-y-1">
                     <h2 className="text-lg font-medium">{memory.title}</h2>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-neutral-600">
                       {resolveDisplayDate(memory.occurredOnDisplay)}
                       {memory.location ? ` • ${memory.location}` : ""}
                     </p>
                     {memory.mood ? (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-neutral-600">
                         Mood: {memory.mood}
                       </p>
                     ) : null}
                   </div>
 
                   {memory.description ? (
-                    <p className="text-sm text-muted-foreground line-clamp-3">
+                    <p className="text-sm text-neutral-600 line-clamp-3">
                       {memory.description}
                     </p>
                   ) : null}

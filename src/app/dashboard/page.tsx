@@ -1,35 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
-import { DailyMemoryCard } from "./DailyMemoryCard";
+import { DailyMemoryCard } from "@/components/memory/DailyMemoryCard";
+import { RecentMemoriesSection } from "./RecentMemoriesSection";
 // import { ensureUserForClerkAccount } from "@/db/users";
-
-const highlightedMemories = [
-  {
-    title: "A sunset hike with Maya",
-    description:
-      "The sky burned in shades of coral and violet as we reached the ridge. Maya laughed when the wind caught her scarf, and I realized how grounded I felt in that moment.",
-    timestamp: "Captured 3 days ago",
-    mood: "Mood: Awe + Gratitude",
-    location: "England",
-  },
-  {
-    title: "First rehearsal with the quartet",
-    description:
-      "We stumbled through the opening movement, but by the third run it clicked. The room felt electric—this is the creative stretch I have been craving.",
-    timestamp: "Captured 1 week ago",
-    mood: "Mood: Energized",
-    location: "England",
-  },
-  {
-    title: "Calling dad on the drive home",
-    description:
-      "He told the story about my first bicycle again. I noticed new details in how he remembered it—maybe it matters more to him than I realized.",
-    timestamp: "Captured 2 weeks ago",
-    mood: "Mood: Reflective",
-    location: "In The Car",
-  },
-];
 
 export default async function Home() {
   const user = await currentUser();
@@ -72,31 +46,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section>
-        <div className="border-b">
-          <div className="px-0 lg:px-8 mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2">
-            <h2 className="font-semibold text-4xl py-20">Time capsules</h2>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="py-44 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
-        aria-label="Highlighted memories">
-        {highlightedMemories.map((memory) => (
-          <article
-            key={memory.title}
-            className="flex flex-col gap-4 rounded-xl border p-6">
-            <div className="flex justify-between text-xs font-medium uppercase tracking-[0.2em]">
-              <span>{memory.timestamp}</span>
-              <span>{memory.mood}</span>
-            </div>
-            <h3 className="text-lg font-semibold">{memory.title}</h3>
-            <p className="text-sm leading-relaxed">{memory.description}</p>
-            <span>{memory.location}</span>
-          </article>
-        ))}
-      </section>
+      <RecentMemoriesSection />
     </div>
   );
 }
