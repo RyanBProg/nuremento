@@ -49,7 +49,7 @@ export default async function Home() {
   return (
     <div>
       <section className="border-b">
-        <div className="py-32 lg:pb-52 mx-auto max-w-4xl">
+        <div className="py-32 lg:pb-52 mx-auto max-w-6xl">
           <div className="px-4 xs:px-8 mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
             <span className="inline-flex items-center justify-center rounded-full text-xs font-semibold uppercase tracking-[0.2em]">
               Your companion for meaningful recall

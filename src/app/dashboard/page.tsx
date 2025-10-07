@@ -36,38 +36,43 @@ export default async function Home() {
     return null;
   }
 
-  await ensureUserForClerkAccount(user);
+  // await ensureUserForClerkAccount(user);
 
   const displayName =
     user.firstName || user.fullName || user.username || "there";
 
   return (
-    <div className="mx-auto w-full space-y-12 py-16 md:space-y-14 md:py-20">
-      <header className="space-y-4">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Welcome back, {displayName}.
-        </h1>
-        <p className="max-w-2xl text-base leading-relaxed">
-          Here is a snapshot of the memories you have captured recently. Pick a
-          quick action to add more context or reflect on a moment.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <CreateMemoryButton />
-          <Link
-            href="/dashboard/memories"
-            className="rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2">
-            View your memories
-          </Link>
-          <Link
-            href="#"
-            className="rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2">
-            Start a reflection
-          </Link>
+    <div>
+      <section>
+        <div className="border-b">
+          <div className="px-0 md:px-8 mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2">
+            <div className="p-10 lg:p-14">
+              <h1 className="mb-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                Welcome back, {displayName}.
+              </h1>
+              <p className="max-w-2xl text-base leading-relaxed">
+                Here is a snapshot of the memories you have captured recently.
+                Pick a quick action to add more context or reflect on a moment.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <CreateMemoryButton />
+                <Link href="/dashboard/memories" className="button-border">
+                  View your memories
+                </Link>
+                <Link href="#" className="button-border">
+                  Start a reflection
+                </Link>
+              </div>
+            </div>
+            <div className="p-10 lg:p-14 border-t md:border-l md:border-t-0">
+              <div>{/* add random memory of the day here!! */}</div>
+            </div>
+          </div>
         </div>
-      </header>
+      </section>
 
       <section
-        className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+        className="py-44 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
         aria-label="Highlighted memories">
         {highlightedMemories.map((memory) => (
           <article
