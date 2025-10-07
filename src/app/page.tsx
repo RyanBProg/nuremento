@@ -1,39 +1,37 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
 
 const features = [
   {
-    title: "Rich memory journal",
+    title: "Memory Ocean",
+    img: "/images/message-bottle.png",
+    imgAlt: "message bottle",
+    tag: "Cast your memories into the waves",
     description:
-      "Layer every entry with context—locations, people, sensory details, and media attachments—so revisiting a moment feels effortless.",
+      "Each day you return, the sea sends one back - a message from your past, floating gently to shore.",
+    link: "#",
+    linkText: "Visit memory ocean",
   },
   {
-    title: "Smart resurfacing",
+    title: "Timecapsules",
+    img: "/images/message-bottle.png",
+    imgAlt: "message bottle",
+    tag: "Wisdom from past you",
     description:
-      "Gentle reminders resurface meaningful memories on anniversaries, milestones, or when similar themes appear in your life.",
+      "Choose when it resurfaces — a reminder, a reflection, or a surprise from who you once were.",
+    link: "#",
+    linkText: "Create a timecapsule",
   },
   {
-    title: "Conversational recall",
+    title: "Shooter",
+    img: "/images/message-bottle.png",
+    imgAlt: "message bottle",
+    tag: "Not all memories deserve to stay.",
     description:
-      "Ask natural questions like ‘When was the last time I felt this confident?’ and get grounded, personal answers instantly.",
-  },
-];
-
-const timeline = [
-  {
-    label: "Capture",
-    detail:
-      "Record a moment in seconds with voice, text, or photo uploads—Nuremento fills in the details for you.",
-  },
-  {
-    label: "Enrich",
-    detail:
-      "Add prompts, reflections, and connected memories to build a living archive of who you are becoming.",
-  },
-  {
-    label: "Reflect",
-    detail:
-      "Return to curated memory playlists whenever you need grounding, encouragement, or perspective.",
+      "Shoot your bad memories to distruction - point, shoot, breathe out, move on.",
+    link: "#",
+    linkText: "Visit memory ocean",
   },
 ];
 
@@ -45,92 +43,119 @@ export default async function Home() {
     : { href: "/sign-up", label: "Start capturing memories" };
 
   const secondaryCta = userId
-    ? { href: "/dashboard", label: "Review recent entries" }
+    ? { href: "/dashboard/memories", label: "View your memories" }
     : { href: "/sign-in", label: "I already have an account" };
 
   return (
-    <div className="app-container space-y-16 py-16 md:space-y-20 md:py-24">
-      <section className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-        <span className="inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
-          Your companion for meaningful recall
-        </span>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Hold onto every detail that makes your story unique.
-        </h1>
-        <p className="text-base leading-relaxed sm:text-lg">
-          Nuremento gives you a calm place to chronicle your memories, add depth
-          with guided prompts, and then revisit them through mindful,
-          conversational experiences.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link
-            className="rounded-full px-6 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2"
-            href={primaryCta.href}>
-            {primaryCta.label}
-          </Link>
-          <Link
-            className="rounded-full border px-6 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2"
-            href={secondaryCta.href}>
-            {secondaryCta.label}
-          </Link>
-        </div>
-      </section>
-
-      <section id="features" className="space-y-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            A memory OS crafted for emotional fidelity.
-          </h2>
-          <p className="mt-4 text-base leading-relaxed sm:text-lg">
-            Build a trusted archive that preserves context, sentiment, and
-            personal growth—without the overwhelm of traditional journaling.
-          </p>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {features.map((feature) => (
-            <article
-              key={feature.title}
-              className="flex flex-col gap-3 rounded-xl border p-8">
-              <h3 className="text-lg font-semibold">{feature.title}</h3>
-              <p className="text-sm leading-relaxed">{feature.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="how-it-works" className="space-y-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Designed for reflection in three simple rhythms.
-          </h2>
-          <p className="mt-4 text-base leading-relaxed sm:text-lg">
-            Let Nuremento capture the details while you stay present—then return
-            any time to explore the stories that shape you.
-          </p>
-        </div>
-        <div className="grid gap-6 rounded-xl border p-8 md:grid-cols-3">
-          {timeline.map((item) => (
-            <div key={item.label} className="flex flex-col gap-2 text-left">
-              <strong className="text-xs font-semibold uppercase tracking-[0.2em]">
-                {item.label}
-              </strong>
-              <span className="text-base font-medium">{item.detail}</span>
+    <div>
+      <section className="border-b">
+        <div className="py-32 lg:pb-52 mx-auto max-w-4xl">
+          <div className="px-4 xs:px-8 mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
+            <span className="inline-flex items-center justify-center rounded-full text-xs font-semibold uppercase tracking-[0.2em]">
+              Your companion for meaningful recall
+            </span>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              Hold onto and re-live memories in unquie ways.
+            </h1>
+            <p className="text-base leading-relaxed sm:text-lg">
+              Nuremento gives you a place to chronicle your memories, and
+              revisit them through mindful, unique experiences.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link className="button-filled" href={primaryCta.href}>
+                {primaryCta.label}
+              </Link>
+              <Link className="button-border" href={secondaryCta.href}>
+                {secondaryCta.label}
+              </Link>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      <section id="security" className="space-y-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Private by default, secure by design.
-          </h2>
-          <p className="mt-4 text-base leading-relaxed sm:text-lg">
-            End-to-end safeguards keep your memories protected. Granular
-            controls put you in charge of what is shared and when—and Clerk
-            handles sign-in, session management, and multi-factor flows out of
-            the box.
-          </p>
+      <section id="features" className="bg-white border-b">
+        <div className="py-20 lg:py-44 mx-auto max-w-6xl border-x">
+          <div className="border-t px-4 xs:px-8 text-center py-10">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              Different ways of interacting
+            </h2>
+            <p className="mt-4 text-base leading-relaxed sm:text-lg">
+              It’s one thing to remember, but another to interact. Here, you can
+              interact with your past like never before — with calm, curiosity,
+              and creativity.
+            </p>
+          </div>
+          <div className="border-y grid md:grid-cols-1 lg:grid-cols-3">
+            {features.map((feature) => (
+              <article
+                key={feature.title}
+                className="max-w-lg flex flex-col p-8 justify-self-center border-x border-b last:border-b-0 lg:border-0">
+                <div className="flex justify-center items-center">
+                  <Image
+                    src={feature.img}
+                    alt={feature.imgAlt}
+                    height={300}
+                    width={150}
+                  />
+                </div>
+                <h3 className="font-semibold text-xl">{feature.title}</h3>
+                <p className="mb-5 italic ">{feature.tag}</p>
+                <p className="mb-10">{feature.description}</p>
+                <div className="flex-1 flex items-end">
+                  <Link className="button-border" href={feature.link}>
+                    {feature.linkText}
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="purpose" className="py-20 lg:py-44">
+        <div className="py-10 px-4 xs:px-8 border-y font-bold text-3xl">
+          <h2 className="text-center">Pure memories, free from distraction</h2>
+        </div>
+        <div className="border-b">
+          <div className="px-0 md:px-8 mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2">
+            <div className="p-10 lg:p-14 flex items-center">
+              <ul className="grid gap-4">
+                <li>
+                  <span className="font-semibold">
+                    Build a personal archive of memories and experiences
+                  </span>{" "}
+                  - capture life’s moments without the noise of social media.
+                </li>
+                <li>
+                  <span className="font-semibold">
+                    Interact with your memories in unique ways
+                  </span>{" "}
+                  - drop them in the ocean, seal them in a capsule, or set them
+                  free.
+                </li>
+                <li>
+                  <span className="font-semibold">
+                    Get a little help from AI
+                  </span>{" "}
+                  - bring stories to life, regardless of your writing skills,
+                  with our AI descrpition writing feature.
+                </li>
+              </ul>
+            </div>
+            <div className="p-10 lg:p-14 border-t md:border-l md:border-t-0">
+              <h3 className="font-bold mb-3 text-lg">The Purpose</h3>
+              <p>
+                Our lives move fast, and our memories often get lost in the
+                noise. <span className="font-semibold">Nuremento</span> exists
+                to bring them back — simply, quietly, and meaningfully. We
+                provide space to capture your core memories — free from
+                comparison, clutter, or constant scrolling, leaving space for
+                internal reflection. Here, you can revisit the moments that
+                shaped you, send reminders of hope to your future self, and let
+                go of the ones that still ache.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>

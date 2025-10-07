@@ -27,23 +27,33 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
+      afterSignOutUrl="/"
       appearance={{
         variables: {
-          colorPrimary: "#1d4ed8",
+          colorPrimary: "#000",
           colorText: "#0f172a",
-          colorBackground: "#ffffff",
+          colorBackground: "#fff",
+          borderRadius: "1px",
+          colorBorder: "#000",
         },
       }}>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col`}>
           <div className="site-shell">
             <SiteHeader />
-            <main className="site-main">{children}</main>
-            <footer className="site-footer">
-              <div className="app-container flex flex-wrap items-center gap-2 text-sm">
-                <strong className="font-semibold">Nuremento</strong>
-                <span>
-                  Built for people who want their stories to stay vivid.
+            <main className="flex-1 flex flex-col">{children}</main>
+            <footer className="border-t py-12 text-sm px-4 xs:px-8">
+              <div className="mx-auto max-w-6xl flex flex-col justify-center items-center gap-4 text-sm">
+                <p className="text-center">
+                  <strong className="font-semibold mr-2">Nuremento</strong>
+                  <span>
+                    Built for people who want their stories to stay vivid.
+                  </span>
+                </p>
+                <span className="text-center">
+                  &copy; {new Date().getFullYear()} Nuremento. All rights
+                  reserved.
                 </span>
               </div>
             </footer>

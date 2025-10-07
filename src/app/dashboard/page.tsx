@@ -42,7 +42,7 @@ export default async function Home() {
     user.firstName || user.fullName || user.username || "there";
 
   return (
-    <div className="app-container space-y-12 py-16 md:space-y-14 md:py-20">
+    <div className="mx-auto w-full space-y-12 py-16 md:space-y-14 md:py-20">
       <header className="space-y-4">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Welcome back, {displayName}.
