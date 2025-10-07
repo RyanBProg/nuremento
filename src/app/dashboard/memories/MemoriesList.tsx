@@ -1,9 +1,8 @@
 "use client";
-
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { MemoryCard } from "@/components/memory/MemoryCard";
 import {
   MemoryFormModal,
   type MemoryFormData,
@@ -128,47 +127,33 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
           {mappedMemories.map(({ record: memory, formData }) => {
             const isDeleting = deletingId === memory.id;
 
+            const subtitleParts: string[] = [];
+            const displayDate = resolveDisplayDate(memory.occurredOnDisplay);
+
+            if (displayDate) {
+              subtitleParts.push(displayDate);
+            }
+            if (memory.location) {
+              subtitleParts.push(memory.location);
+            }
+            if (memory.mood) {
+              subtitleParts.push(`Mood: ${memory.mood}`);
+            }
+
             return (
-              <article
+              <MemoryCard
                 key={memory.id}
-                className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
-                {memory.thumbnailUrl ? (
-                  <div className="relative h-60 w-60 overflow-hidden">
-                    <Image
-                      src={memory.thumbnailUrl}
-                      alt={memory.title}
-                      fill
-                      className="object-cover"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex h-48 w-full items-center justify-center bg-muted text-sm text-neutral-600">
+                title={memory.title}
+                subtitle={subtitleParts.join(" • ")}
+                description={memory.description}
+                thumbnailUrl={memory.thumbnailUrl}
+                thumbnailFallback={
+                  <div className="flex h-full w-full items-center justify-center rounded-lg border bg-muted text-sm text-neutral-600">
                     No photo added
                   </div>
-                )}
-
-                <div className="flex flex-1 flex-col gap-3 p-4">
-                  <div className="space-y-1">
-                    <h2 className="text-lg font-medium">{memory.title}</h2>
-                    <p className="text-xs text-neutral-600">
-                      {resolveDisplayDate(memory.occurredOnDisplay)}
-                      {memory.location ? ` • ${memory.location}` : ""}
-                    </p>
-                    {memory.mood ? (
-                      <p className="text-xs text-neutral-600">
-                        Mood: {memory.mood}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  {memory.description ? (
-                    <p className="text-sm text-neutral-600 line-clamp-3">
-                      {memory.description}
-                    </p>
-                  ) : null}
-
-                  <div className="mt-auto flex gap-2">
+                }
+                actions={
+                  <div className="mt-auto flex w-full gap-2">
                     <MemoryFormModal
                       memory={formData}
                       trigger={({ open }) => (
@@ -188,8 +173,8 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                       {isDeleting ? "Deleting…" : "Delete"}
                     </button>
                   </div>
-                </div>
-              </article>
+                }
+              />
             );
           })}
         </div>
