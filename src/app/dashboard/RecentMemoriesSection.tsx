@@ -1,10 +1,17 @@
-"use client";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { desc, eq } from "drizzle-orm";
 
+import { db } from "@/db/client";
+import { memories } from "@/db/schema";
+import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
+import { formatDate } from "@/lib/utils";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { MemoryCard } from "@/components/memory/MemoryCard";
+
+type RecentMemoriesSectionProps = {
+  userId: string;
+  limit?: number;
+};
 
 type RecentMemory = {
   id: string;
@@ -12,14 +19,8 @@ type RecentMemory = {
   description: string | null;
   mood: string | null;
   location: string | null;
-  occurredOn: string | null;
   occurredOnDisplay: string;
   thumbnailUrl: string | null;
-};
-
-type RecentMemoriesResponse = {
-  memories: RecentMemory[];
-  error?: string;
 };
 
 function buildSubtitle(memory: RecentMemory) {
@@ -40,46 +41,36 @@ function buildSubtitle(memory: RecentMemory) {
   return parts.join(" • ") || "Recent memory";
 }
 
-export function RecentMemoriesSection() {
-  const [memories, setMemories] = useState<RecentMemory[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading"
+async function getRecentMemories(
+  userId: string,
+  limit: number
+): Promise<RecentMemory[]> {
+  const rows = await db
+    .select()
+    .from(memories)
+    .where(eq(memories.clerkId, userId))
+    .orderBy(desc(memories.createdAt))
+    .limit(limit);
+
+  return Promise.all(
+    rows.map(async (memory) => ({
+      id: memory.id,
+      title: memory.title,
+      description: memory.description,
+      mood: memory.mood,
+      location: memory.location,
+      occurredOnDisplay: formatDate(memory.occurredOn),
+      thumbnailUrl: await resolveThumbnailUrl(memory),
+    }))
   );
-  const [error, setError] = useState<string | null>(null);
+}
 
-  const fetchRecentMemories = useCallback(async () => {
-    setStatus("loading");
-    setError(null);
-
-    try {
-      const response = await fetch("/api/memories/recent?limit=3", {
-        method: "GET",
-        credentials: "same-origin",
-        cache: "no-store",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to load recent memories.");
-      }
-
-      const payload = (await response.json()) as RecentMemoriesResponse;
-      setMemories(payload.memories ?? []);
-      setStatus("ready");
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to fetch recent memories."
-      );
-      setStatus("error");
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchRecentMemories();
-  }, [fetchRecentMemories]);
-
-  const hasMemories = useMemo(() => memories.length > 0, [memories]);
-  const cardClasses =
-    "flex w-full min-w-[16rem] max-w-xl flex-col space-y-3 rounded-xl border bg-background p-6";
+export async function RecentMemoriesSection({
+  userId,
+  limit = 3,
+}: RecentMemoriesSectionProps) {
+  const memories = await getRecentMemories(userId, limit);
+  const hasMemories = memories.length > 0;
 
   return (
     <section className="bg-white">
@@ -97,29 +88,8 @@ export function RecentMemoriesSection() {
             View all memories
           </Link>
         </div>
-        {status === "loading" ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className={`${cardClasses} animate-pulse`}>
-                <div className="aspect-square rounded-lg bg-muted" />
-                <div className="h-4 rounded bg-muted" />
-                <div className="h-4 w-4/6 rounded bg-muted" />
-              </div>
-            ))}
-          </div>
-        ) : status === "error" ? (
-          <div className={`${cardClasses} space-y-4`}>
-            <p className="text-sm text-destructive">
-              {error ?? "Something went wrong while loading your memories."}
-            </p>
-            <button
-              type="button"
-              onClick={fetchRecentMemories}
-              className="button-border inline-flex items-center justify-center">
-              Try again
-            </button>
-          </div>
-        ) : hasMemories ? (
+
+        {hasMemories ? (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {memories.map((memory) => (
               <MemoryCard

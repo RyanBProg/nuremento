@@ -41,7 +41,7 @@ export function MemoryCard({
         ) : null}
         <h3 className="text-xl font-semibold">{title}</h3>
         {description ? (
-          <p className="text-sm leading-relaxed text-neutral-600">
+          <p className="text-sm leading-relaxed text-neutral-600 text-ellipsis">
             {description}
           </p>
         ) : null}

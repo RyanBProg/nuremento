@@ -40,13 +40,13 @@ export default async function Home() {
               </div>
             </div>
             <div className="p-10 lg:p-14 border-t lg:border-l lg:border-t-0 flex justify-center">
-              <DailyMemoryCard />
+              <DailyMemoryCard userId={user.id} />
             </div>
           </div>
         </div>
       </section>
 
-      <RecentMemoriesSection />
+      <RecentMemoriesSection userId={user.id} />
     </div>
   );
 }

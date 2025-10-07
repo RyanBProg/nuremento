@@ -1,4 +1,4 @@
-export function formatDate(value: string | Date | null) {
+export function formatDate(value: string | Date | null): string {
   if (!value) {
     return "—";
   }
@@ -6,7 +6,7 @@ export function formatDate(value: string | Date | null) {
   const date = value instanceof Date ? value : new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return value;
+    return value.toString();
   }
 
   return new Intl.DateTimeFormat("en", {

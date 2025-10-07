@@ -254,7 +254,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
 
       {isOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-          <div className="overflow-y-scroll h-full relative w-full max-w-2xl rounded-2xl bg-white p-6">
+          <div className="overflow-y-scroll max-h-full relative w-full max-w-2xl rounded-2xl bg-white p-6">
             <button
               type="button"
               onClick={closeModal}
