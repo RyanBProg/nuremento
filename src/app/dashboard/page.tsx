@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
-import { ensureUserForClerkAccount } from "@/db/users";
+import Link from "next/link";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
+import { DailyMemoryCard } from "./DailyMemoryCard";
+// import { ensureUserForClerkAccount } from "@/db/users";
 
 const highlightedMemories = [
   {
@@ -45,8 +46,8 @@ export default async function Home() {
     <div>
       <section>
         <div className="border-b">
-          <div className="px-0 md:px-8 mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2">
-            <div className="p-10 lg:p-14">
+          <div className="px-0 lg:px-8 mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2">
+            <div className="p-10 lg:p-14 flex flex-col justify-center">
               <h1 className="mb-3 text-3xl font-semibold tracking-tight sm:text-4xl">
                 Welcome back, {displayName}.
               </h1>
@@ -64,9 +65,17 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
-            <div className="p-10 lg:p-14 border-t md:border-l md:border-t-0">
-              <div>{/* add random memory of the day here!! */}</div>
+            <div className="p-10 lg:p-14 border-t lg:border-l lg:border-t-0 flex justify-center">
+              <DailyMemoryCard />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="border-b">
+          <div className="px-0 lg:px-8 mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2">
+            <h2 className="font-semibold text-4xl py-20">Time capsules</h2>
           </div>
         </div>
       </section>
