@@ -1,13 +1,17 @@
-import { X } from "lucide-react";
-import { FormImageUploadImage } from "./NewMemoryForm";
 import Image from "next/image";
+import { X } from "lucide-react";
 import { ChangeEvent, RefObject } from "react";
+
+export type MemoryImageSelection = {
+  file: File;
+  previewUrl: string;
+};
 
 type Props = {
   label: string;
   description: string;
   handleImageUpload: (event: ChangeEvent<HTMLInputElement>) => void;
-  imageFile: FormImageUploadImage | null;
+  imageFile: MemoryImageSelection | null;
   handleRemoveImage: () => void;
   imageInputRef: RefObject<HTMLInputElement | null>;
 };
@@ -45,8 +49,8 @@ export default function MemoryImageUpload({
       {description ? <p className="text-xs">{description}</p> : null}
 
       {imageFile ? (
-        <div className="space-y-2 rounded-lg border p-3">
-          <div className={`relative h-40 overflow-hidden rounded-md`}>
+        <div className="space-y-2 rounded-lg border p-3 w-min">
+          <div className={`relative h-60 w-60 overflow-hidden rounded-md`}>
             <Image
               src={imageFile.previewUrl}
               alt={imageFile.file.name}
@@ -61,8 +65,8 @@ export default function MemoryImageUpload({
               <X size={16} />
             </button>
           </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="truncate" title={imageFile.file.name}>
+          <div className="w-60 flex items-center justify-between text-xs gap-5">
+            <span className="max-w-40 truncate" title={imageFile.file.name}>
               {imageFile.file.name}
             </span>
             <span>{formatFileSize(imageFile.file.size)}</span>

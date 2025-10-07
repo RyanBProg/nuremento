@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { ensureUserForClerkAccount } from "@/db/users";
-
-const quickActions = [
-  { label: "Log a memory", href: "/dashboard/memories/add" },
-  { label: "View your memories", href: "/dashboard/memories" },
-  { label: "Start a reflection", href: "#" },
-];
+import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 
 const highlightedMemories = [
   {
@@ -57,14 +52,17 @@ export default async function Home() {
           quick action to add more context or reflect on a moment.
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          {quickActions.map((action) => (
-            <Link
-              key={action.label}
-              href={action.href}
-              className="rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2">
-              {action.label}
-            </Link>
-          ))}
+          <CreateMemoryButton />
+          <Link
+            href="/dashboard/memories"
+            className="rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2">
+            View your memories
+          </Link>
+          <Link
+            href="#"
+            className="rounded-full border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2">
+            Start a reflection
+          </Link>
         </div>
       </header>
 

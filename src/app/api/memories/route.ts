@@ -10,17 +10,15 @@ import { memories } from "@/db/schema";
 import { getS3Client } from "@/lib/aws/s3Client";
 import { optimiseImage } from "@/lib/sharp/optimiseImage";
 import { metadataSchema } from "@/lib/zod/schemas";
+import { createSignedUrlForKey } from "@/lib/storage";
+import {
+  MAX_IMAGE_BYTES,
+  MAX_IMAGE_BYTES_TEXT,
+  SUPPORTED_IMAGE_MIME_TYPES,
+  SUPPORTED_IMAGE_MIME_TYPES_TEXT,
+} from "@/lib/constants";
 
 export const runtime = "nodejs";
-
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const SUPPORTED_IMAGE_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/heic",
-  "image/heif",
-]);
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 
@@ -110,7 +108,9 @@ export async function POST(req: NextRequest) {
 
       if (imageEntry.size > MAX_IMAGE_BYTES) {
         return NextResponse.json(
-          { error: "Image size too large. Please choose one up to 10MB." },
+          {
+            error: `Image size too large. Please choose one up to ${MAX_IMAGE_BYTES_TEXT}.`,
+          },
           { status: 400 }
         );
       }
@@ -133,7 +133,9 @@ export async function POST(req: NextRequest) {
 
         if (!fileType || !SUPPORTED_IMAGE_MIME_TYPES.has(fileType.mime)) {
           return NextResponse.json(
-            { error: "Only image uploads are supported." },
+            {
+              error: `Only ${SUPPORTED_IMAGE_MIME_TYPES_TEXT} uploads are supported.`,
+            },
             { status: 400 }
           );
         }
@@ -184,7 +186,17 @@ export async function POST(req: NextRequest) {
       throw error;
     }
 
-    return NextResponse.json({ ok: true, memoryId });
+    const thumbnailUrl = thumbnailKey
+      ? await createSignedUrlForKey(thumbnailKey)
+      : null;
+
+    return NextResponse.json({
+      ok: true,
+      memoryId,
+      imageKey,
+      imageThumbnailKey: thumbnailKey,
+      thumbnailUrl,
+    });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.flatten() }, { status: 400 });
@@ -304,7 +316,9 @@ export async function PUT(req: NextRequest) {
 
       if (imageEntry.size > MAX_IMAGE_BYTES) {
         return NextResponse.json(
-          { error: "Image size too large. Please choose one up to 10MB." },
+          {
+            error: `Image size too large. Please choose one up to ${MAX_IMAGE_BYTES_TEXT}.`,
+          },
           { status: 400 }
         );
       }
@@ -326,7 +340,9 @@ export async function PUT(req: NextRequest) {
 
         if (!fileType || !SUPPORTED_IMAGE_MIME_TYPES.has(fileType.mime)) {
           return NextResponse.json(
-            { error: "Only image uploads are supported." },
+            {
+              error: `Only ${SUPPORTED_IMAGE_MIME_TYPES_TEXT} uploads are supported.`,
+            },
             { status: 400 }
           );
         }
@@ -393,7 +409,22 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ok: true, memoryId });
+    const thumbnailUrl = thumbnailKey
+      ? await createSignedUrlForKey(thumbnailKey)
+      : null;
+
+    return NextResponse.json({
+      ok: true,
+      memoryId,
+      title: metadata.title,
+      description: metadata.description,
+      occurredOn: metadata.occurredOn,
+      location: metadata.location,
+      mood: metadata.mood,
+      imageKey,
+      imageThumbnailKey: thumbnailKey,
+      thumbnailUrl,
+    });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.flatten() }, { status: 400 });
