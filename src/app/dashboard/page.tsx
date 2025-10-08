@@ -2,6 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { DailyMemoryCard } from "@/components/memory/DailyMemoryCard";
+import { TimeCapsulesSection } from "./TimeCapsulesSection";
 import { RecentMemoriesSection } from "./RecentMemoriesSection";
 // import { ensureUserForClerkAccount } from "@/db/users";
 
@@ -46,7 +47,15 @@ export default async function Home() {
         </div>
       </section>
 
+      <section>{/* add timecapsules here! */}</section>
+
       <RecentMemoriesSection userId={user.id} />
+
+      <section className="px-0 lg:px-8">
+        <div className="mx-auto max-w-6xl py-20">
+          <TimeCapsulesSection userId={user.id} />
+        </div>
+      </section>
     </div>
   );
 }
