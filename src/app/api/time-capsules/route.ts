@@ -8,9 +8,10 @@ import {
 } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import { eq, and, sql } from "drizzle-orm";
-
 import { db } from "@/db/client";
 import { timeCapsules } from "@/db/schema";
+import { timeCapsuleData } from "@/lib/zod/schemas";
+import z from "zod";
 
 const MAX_FUTURE_DAYS = 183; // ~6 months
 
@@ -40,172 +41,167 @@ function parseAndValidateOpenDate(raw: unknown) {
 }
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const [{ count }] = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(timeCapsules)
-    .where(eq(timeCapsules.clerkId, userId));
-
-  if (Number(count ?? 0) >= 10) {
-    return NextResponse.json(
-      { error: "You have reached the maximum of 10 time capsules." },
-      { status: 400 }
-    );
-  }
-
-  let body: unknown;
-
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
-  }
+    const { userId } = await auth();
 
-  if (
-    typeof body !== "object" ||
-    body === null ||
-    typeof (body as { title?: unknown }).title !== "string" ||
-    typeof (body as { message?: unknown }).message !== "string" ||
-    typeof (body as { openOn?: unknown }).openOn !== "string"
-  ) {
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(timeCapsules)
+      .where(eq(timeCapsules.clerkId, userId));
+
+    if (Number(count ?? 0) >= 10) {
+      return NextResponse.json(
+        { error: "You have reached the maximum of 10 time capsules." },
+        { status: 400 }
+      );
+    }
+
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body." },
+        { status: 400 }
+      );
+    }
+
+    const { title, message, openOn } = timeCapsuleData.parse(body);
+
+    const result = parseAndValidateOpenDate(openOn);
+
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
+    const [record] = await db
+      .insert(timeCapsules)
+      .values({
+        clerkId: userId,
+        title: title,
+        message: message,
+        openOn: openOn,
+      })
+      .returning();
+
     return NextResponse.json(
-      { error: "Missing required fields: title, message, openOn." },
-      { status: 400 }
-    );
-  }
-
-  const { title, message, openOn } = body as {
-    title: string;
-    message: string;
-    openOn: string;
-  };
-
-  const trimmedTitle = title.trim();
-  const trimmedMessage = message.trim();
-
-  if (!trimmedTitle) {
-    return NextResponse.json(
-      { error: "Please provide a title for your time capsule." },
-      { status: 400 }
-    );
-  }
-
-  if (!trimmedMessage) {
-    return NextResponse.json(
-      { error: "Please provide a message for your time capsule." },
-      { status: 400 }
-    );
-  }
-
-  const result = parseAndValidateOpenDate(openOn);
-
-  if ("error" in result) {
-    return NextResponse.json({ error: result.error }, { status: 400 });
-  }
-
-  const openDate = result.date;
-
-  const [record] = await db
-    .insert(timeCapsules)
-    .values({
-      clerkId: userId,
-      title: trimmedTitle,
-      message: trimmedMessage,
-      openOn: openDate,
-    })
-    .returning();
-
-  return NextResponse.json(
-    {
-      capsule: {
-        id: record.id,
-        title: record.title,
-        message: record.message,
-        openOn: record.openOn?.toISOString?.().slice(0, 10) ?? record.openOn,
-        openedAt:
-          record.openedAt?.toISOString?.().slice(0, 10) ?? record.openedAt,
-        createdAt:
-          record.createdAt?.toISOString?.() ?? record.createdAt?.toString?.(),
+      {
+        capsule: {
+          id: record.id,
+          title: record.title,
+          message: record.message,
+          openOn: record.openOn?.toString?.().slice(0, 10) ?? record.openOn,
+        },
       },
-    },
-    { status: 201 }
-  );
+      { status: 201 }
+    );
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: err.flatten() }, { status: 400 });
+    }
+
+    console.error("Unexpected error getting capsule", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }
 
 export async function GET(request: NextRequest) {
-  const { userId } = await auth();
+  try {
+    const { userId } = await auth();
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const { searchParams } = new URL(request.url);
-  const capsuleId = searchParams.get("id");
+    const { searchParams } = new URL(request.url);
+    const capsuleId = searchParams.get("id");
 
-  if (!capsuleId) {
-    return NextResponse.json(
-      { error: "Missing time capsule id." },
-      { status: 400 }
-    );
-  }
+    if (!capsuleId) {
+      return NextResponse.json(
+        { error: "Missing time capsule id." },
+        { status: 400 }
+      );
+    }
 
-  const [capsule] = await db
-    .select()
-    .from(timeCapsules)
-    .where(and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId)))
-    .limit(1);
+    const [capsule] = await db
+      .select()
+      .from(timeCapsules)
+      .where(
+        and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId))
+      )
+      .limit(1);
 
-  if (!capsule) {
-    return NextResponse.json(
-      { error: "Time capsule not found." },
-      { status: 404 }
-    );
-  }
+    if (!capsule) {
+      return NextResponse.json(
+        { error: "Time capsule not found." },
+        { status: 404 }
+      );
+    }
 
-  const today = startOfDay(new Date());
-  const openOnValue =
-    typeof capsule.openOn === "string"
-      ? parseISO(capsule.openOn)
-      : capsule.openOn ?? new Date(0);
+    const today = startOfDay(new Date());
+    const openOnValue =
+      typeof capsule.openOn === "string"
+        ? parseISO(capsule.openOn)
+        : capsule.openOn ?? new Date(0);
 
-  if (isBefore(today, startOfDay(openOnValue))) {
+    if (isBefore(today, startOfDay(openOnValue))) {
+      return NextResponse.json(
+        {
+          error: "This time capsule is still locked.",
+          openOn: capsule.openOn,
+        },
+        { status: 403 }
+      );
+    }
+
     return NextResponse.json(
       {
-        error: "This time capsule is still locked.",
-        openOn: capsule.openOn,
+        capsule: {
+          id: capsule.id,
+          title: capsule.title,
+          message: capsule.message,
+          openOn: capsule.openOn,
+        },
       },
-      { status: 403 }
+      { status: 200 }
     );
+  } catch (err) {
+    console.error("Unexpected error getting capsule", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
+}
 
-  const openedAt = today;
+export async function DELETE(req: NextRequest) {
+  try {
+    const { userId } = await auth();
 
-  await db
-    .delete(timeCapsules)
-    .where(and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId)));
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const openOnResponse =
-    capsule.openOn instanceof Date
-      ? capsule.openOn.toISOString().slice(0, 10)
-      : typeof capsule.openOn === "string"
-      ? capsule.openOn
-      : null;
+    const { searchParams } = new URL(req.url);
+    const capsuleId = searchParams.get("id");
 
-  return NextResponse.json(
-    {
-      capsule: {
-        id: capsule.id,
-        title: capsule.title,
-        message: capsule.message,
-        openOn: openOnResponse,
-        openedAt: openedAt.toISOString().slice(0, 10),
-      },
-    },
-    { status: 200 }
-  );
+    if (!capsuleId) {
+      return NextResponse.json(
+        { error: "Missing time capsule id." },
+        { status: 400 }
+      );
+    }
+    await db
+      .delete(timeCapsules)
+      .where(
+        and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId))
+      );
+
+    return NextResponse.json({ ok: true }, { status: 204 });
+  } catch (err) {
+    console.error("Unexpected error deleting capsule", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }

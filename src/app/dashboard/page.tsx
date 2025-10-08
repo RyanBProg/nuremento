@@ -35,9 +35,6 @@ export default async function Home() {
                 <Link href="/dashboard/memories" className="button-border">
                   View your memories
                 </Link>
-                <Link href="#" className="button-border">
-                  Start a reflection
-                </Link>
               </div>
             </div>
             <div className="p-10 lg:p-14 border-t lg:border-l lg:border-t-0 flex justify-center">
