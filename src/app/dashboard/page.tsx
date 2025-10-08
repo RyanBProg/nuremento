@@ -1,9 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
-import { DailyMemoryCard } from "@/components/memory/DailyMemoryCard";
-import { TimeCapsulesSection } from "./TimeCapsulesSection";
-import { RecentMemoriesSection } from "./RecentMemoriesSection";
+import { DailyMemoryCard } from "@/components/memories/DailyMemoryCard";
+import { TimeCapsulesDashboardSection } from "@/components/time-capsule/TimeCapsulesDashboardSection";
+import { RecentMemoriesSection } from "@/components/memories/RecentMemoriesSection";
 // import { ensureUserForClerkAccount } from "@/db/users";
 
 export default async function Home() {
@@ -49,7 +49,7 @@ export default async function Home() {
 
       <section className="border-b bg-white px-0 lg:px-8">
         <div className="mx-auto max-w-6xl py-20">
-          <TimeCapsulesSection userId={user.id} />
+          <TimeCapsulesDashboardSection userId={user.id} />
         </div>
       </section>
 

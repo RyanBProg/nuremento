@@ -10,6 +10,7 @@ import {
 } from "react";
 
 type TimeCapsuleOpenModalProps = {
+  showcase?: boolean;
   capsuleId: string;
   title: string;
   openOn: string;
@@ -95,7 +96,7 @@ export function TimeCapsuleOpenModal({
       0,
       0,
       0,
-      0,
+      0
     );
 
     return todayMidnight >= openDate;

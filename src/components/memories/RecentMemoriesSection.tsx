@@ -6,7 +6,7 @@ import { memories } from "@/db/schema";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
-import { MemoryCard } from "@/components/memory/MemoryCard";
+import { MemoryCard } from "@/components/memories/MemoryCard";
 
 type RecentMemoriesSectionProps = {
   userId: string;

@@ -6,23 +6,21 @@ import { memories } from "@/db/schema";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
-import { MemoryCard } from "@/components/memory/MemoryCard";
+import { MemoryCard } from "@/components/memories/MemoryCard";
 
 type DailyMemoryCardProps = {
   userId: string;
 };
 
-type DailyMemoryResult =
-  | {
-      id: string;
-      title: string;
-      description: string | null;
-      mood: string | null;
-      location: string | null;
-      occurredOnDisplay: string;
-      thumbnailUrl: string | null;
-    }
-  | null;
+type DailyMemoryResult = {
+  id: string;
+  title: string;
+  description: string | null;
+  mood: string | null;
+  location: string | null;
+  occurredOnDisplay: string;
+  thumbnailUrl: string | null;
+} | null;
 
 function buildSeed(userId: string, now = new Date()) {
   const isoDate = now.toISOString().slice(0, 10);

@@ -2,13 +2,15 @@ import { asc, eq } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { timeCapsules } from "@/db/schema";
-import { TimeCapsulesPanel } from "@/components/time-capsules/TimeCapsulesPanel";
+import { TimeCapsulesPanel } from "@/components/time-capsule/TimeCapsulesPanel";
 
 type TimeCapsulesSectionProps = {
   userId: string;
 };
 
-export async function TimeCapsulesSection({ userId }: TimeCapsulesSectionProps) {
+export async function TimeCapsulesDashboardSection({
+  userId,
+}: TimeCapsulesSectionProps) {
   const capsules = await db
     .select()
     .from(timeCapsules)

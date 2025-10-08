@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 
-import { MemoryCard } from "@/components/memory/MemoryCard";
+import { MemoryCard } from "@/components/memories/MemoryCard";
 import {
   MemoryFormModal,
   type MemoryFormData,

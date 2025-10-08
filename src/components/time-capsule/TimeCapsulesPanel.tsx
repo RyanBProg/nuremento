@@ -4,8 +4,9 @@ import { useMemo } from "react";
 
 import { TimeCapsuleCreateModal } from "./TimeCapsuleCreateModal";
 import { TimeCapsuleOpenModal } from "./TimeCapsuleOpenModal";
+import TimeCapsule from "./TimeCapsule";
 
-type TimeCapsuleSummary = {
+export type TimeCapsuleSummary = {
   id: string;
   title: string;
   openOn: string;
@@ -71,7 +72,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
       0,
       0,
       0,
-      0,
+      0
     );
 
     for (const capsule of capsules) {
@@ -121,48 +122,36 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
       {hasAny ? (
         <div className="space-y-6">
           {unlocked.length > 0 ? (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-600">
-                Ready to open
-              </h3>
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {unlocked.map((capsule) => (
-                  <li
-                    key={capsule.id}
-                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
-                    <div className="space-y-2">
-                      <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-                        {formatDateOnly(capsule.openOn)}
-                      </p>
-                      <h4 className="text-lg font-semibold">{capsule.title}</h4>
-                      <p className="text-xs text-neutral-500">
-                        Created {formatDateTime(capsule.createdAt)}
-                      </p>
-                      {capsule.openedAt ? (
-                        <p className="text-xs text-neutral-500">
-                          Opened {formatDateOnly(capsule.openedAt)}
-                        </p>
-                      ) : null}
-                    </div>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {capsules.map((capsule) => (
+                <li
+                  key={capsule.id}
+                  className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4 shadow-[5px_5px_0_rgba(0,0,0,1)]">
+                  <TimeCapsule isReady={true} capsule={capsule} />
+                  <div className="space-y-2">
+                    <h4 className="text-lg font-semibold">{capsule.title}</h4>
+                    <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
+                      {formatDateOnly(capsule.openOn)}
+                    </p>
+                  </div>
 
-                    <TimeCapsuleOpenModal
-                      capsuleId={capsule.id}
-                      title={capsule.title}
-                      openOn={capsule.openOn}
-                      openedAt={capsule.openedAt}
-                      trigger={({ open }) => (
-                        <button
-                          type="button"
-                          onClick={open}
-                          className="rounded-full border border-black bg-black px-3 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
-                          Open capsule
-                        </button>
-                      )}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  <TimeCapsuleOpenModal
+                    capsuleId={capsule.id}
+                    title={capsule.title}
+                    openOn={capsule.openOn}
+                    openedAt={capsule.openedAt}
+                    trigger={({ open }) => (
+                      <button
+                        type="button"
+                        onClick={open}
+                        className="rounded-full border border-black bg-black px-3 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
+                        Open capsule
+                      </button>
+                    )}
+                  />
+                </li>
+              ))}
+            </ul>
           ) : null}
 
           {locked.length > 0 ? (
