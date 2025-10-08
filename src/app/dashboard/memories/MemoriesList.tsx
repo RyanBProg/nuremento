@@ -229,9 +229,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
   return (
     <div className="bg-white">
       {globalError ? (
-        <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {globalError}
-        </div>
+        <div className="text-sm text-red-500">{globalError}</div>
       ) : null}
 
       {hasAnyMemories ? (
@@ -295,7 +293,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                       description={memory.description}
                       thumbnailUrl={memory.thumbnailUrl}
                       thumbnailFallback={
-                        <div className="flex h-full w-full items-center justify-center rounded-lg border bg-muted text-sm text-neutral-600">
+                        <div className="flex h-full w-full items-center justify-center rounded-lg border text-sm text-neutral-600">
                           No photo added
                         </div>
                       }

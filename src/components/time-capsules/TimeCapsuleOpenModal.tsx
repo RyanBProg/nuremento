@@ -64,7 +64,7 @@ export function TimeCapsuleOpenModal({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [openedTimestamp, setOpenedTimestamp] = useState<string | null>(
-    openedAt,
+    openedAt
   );
 
   const isUnlocked = useMemo(() => {
@@ -148,8 +148,7 @@ export function TimeCapsuleOpenModal({
               type="button"
               onClick={handleClose}
               className="absolute right-4 top-4 text-sm text-neutral-600 transition hover:text-black"
-              aria-label="Close"
-            >
+              aria-label="Close">
               ✕
             </button>
 
@@ -162,7 +161,7 @@ export function TimeCapsuleOpenModal({
               {isLoading ? (
                 <p>Opening your capsule…</p>
               ) : error ? (
-                <p className="text-destructive">{error}</p>
+                <p className="text-red-500">{error}</p>
               ) : message ? (
                 <>
                   <p className="whitespace-pre-wrap leading-relaxed">
@@ -181,8 +180,7 @@ export function TimeCapsuleOpenModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="rounded-full border px-4 py-2 text-sm font-medium transition hover:bg-muted"
-              >
+                className="rounded-full border px-4 py-2 text-sm font-medium transition">
                 Close
               </button>
             </div>

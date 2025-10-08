@@ -63,7 +63,7 @@ export function TimeCapsuleCreateModal({
 
   function handleFieldChange<Key extends keyof TimeCapsuleForm>(
     key: Key,
-    value: TimeCapsuleForm[Key],
+    value: TimeCapsuleForm[Key]
   ) {
     setFormValues((prev) => ({ ...prev, [key]: value }));
   }
@@ -142,14 +142,12 @@ export function TimeCapsuleCreateModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
           <div
             ref={modalRef}
-            className="overflow-y-scroll max-h-full relative w-full max-w-xl rounded-2xl bg-white p-6"
-          >
+            className="overflow-y-scroll max-h-full relative w-full max-w-xl rounded-2xl bg-white p-6">
             <button
               type="button"
               onClick={closeModal}
               className="absolute right-4 top-4 text-sm text-neutral-600 transition hover:text-black"
-              aria-label="Close"
-            >
+              aria-label="Close">
               ✕
             </button>
 
@@ -158,7 +156,7 @@ export function TimeCapsuleCreateModal({
               Leave a note for your future self and decide when it unlocks.
             </p>
 
-            <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+            <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
               <label className="space-y-2 text-sm font-medium">
                 <span className="block">Title</span>
                 <input
@@ -202,26 +200,22 @@ export function TimeCapsuleCreateModal({
               </label>
 
               {error ? (
-                <div className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                  {error}
-                </div>
+                <div className="text-sm text-red-500">{error}</div>
               ) : null}
 
               <div className="flex justify-end gap-3">
                 <button
-                  type="button"
-                  onClick={closeModal}
-                  className="rounded-full border px-4 py-2 text-sm font-medium transition hover:bg-muted"
-                  disabled={isSubmitting}
-                >
-                  Cancel
+                  type="submit"
+                  className="button-filled"
+                  disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Save capsule"}
                 </button>
                 <button
-                  type="submit"
-                  className="rounded-full border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900 disabled:cursor-not-allowed disabled:opacity-70"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Saving..." : "Save capsule"}
+                  type="button"
+                  onClick={closeModal}
+                  className="button-border"
+                  disabled={isSubmitting}>
+                  Cancel
                 </button>
               </div>
             </form>

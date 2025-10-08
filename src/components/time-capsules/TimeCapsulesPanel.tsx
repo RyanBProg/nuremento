@@ -76,8 +76,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
             <button
               type="button"
               onClick={open}
-              className="self-start rounded-full border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900"
-            >
+              className="self-start rounded-full border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
               Create capsule
             </button>
           )}
@@ -95,8 +94,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                 {unlocked.map((capsule) => (
                   <li
                     key={capsule.id}
-                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4"
-                  >
+                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
                     <div className="space-y-2">
                       <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
                         {formatDate(capsule.openOn)}
@@ -121,8 +119,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                         <button
                           type="button"
                           onClick={open}
-                          className="rounded-full border border-black bg-black px-3 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900"
-                        >
+                          className="rounded-full border border-black bg-black px-3 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
                           Open capsule
                         </button>
                       )}
@@ -142,8 +139,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                 {locked.map((capsule) => (
                   <li
                     key={capsule.id}
-                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4"
-                  >
+                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
                     <div className="space-y-2">
                       <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
                         Unlocks {formatDate(capsule.openOn)}
@@ -164,8 +160,7 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                           type="button"
                           onClick={open}
                           disabled={disabled}
-                          className="rounded-full border px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
-                        >
+                          className="rounded-full border px-3 py-2 text-sm font-medium text-neutral-600 transition disabled:cursor-not-allowed disabled:opacity-60">
                           Locked
                         </button>
                       )}

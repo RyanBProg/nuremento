@@ -47,15 +47,13 @@ export default async function Home() {
         </div>
       </section>
 
-      <section>{/* add timecapsules here! */}</section>
-
-      <RecentMemoriesSection userId={user.id} />
-
-      <section className="px-0 lg:px-8">
+      <section className="border-b bg-white px-0 lg:px-8">
         <div className="mx-auto max-w-6xl py-20">
           <TimeCapsulesSection userId={user.id} />
         </div>
       </section>
+
+      <RecentMemoriesSection userId={user.id} />
     </div>
   );
 }

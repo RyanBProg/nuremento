@@ -446,13 +446,13 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
               </div>
 
               {error ? (
-                <p className="mb-6 text-sm text-destructive">{error}</p>
+                <p className="mb-6 text-sm text-red-500">{error}</p>
               ) : null}
 
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   type="submit"
-                  className="flex-1 rounded-full bg-black px-3 py-2 text-sm font-medium text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="button-filled"
                   disabled={isSubmitting}>
                   {isSubmitting
                     ? "Saving…"
@@ -463,7 +463,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 rounded-full border px-3 py-2 text-sm font-medium transition hover:bg-muted"
+                  className="button-border"
                   disabled={isSubmitting}>
                   Cancel
                 </button>
