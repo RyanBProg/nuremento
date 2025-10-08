@@ -19,6 +19,7 @@ import {
   MAX_IMAGE_BYTES_TEXT,
   SUPPORTED_IMAGE_MIME_TYPES_TEXT,
 } from "@/lib/constants";
+import { Sparkles } from "lucide-react";
 
 const emptyForm = {
   title: "",
@@ -272,9 +273,9 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                 : "Capture the moment while it is still fresh."}
             </p>
 
-            <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm font-medium sm:col-span-2">
+            <form className="mt-6" onSubmit={handleSubmit}>
+              <div className="grid gap-x-4 sm:grid-cols-2">
+                <label className="mb-4 space-y-2 text-sm font-medium sm:col-span-2">
                   <span className="block">Title</span>
                   <input
                     name="title"
@@ -288,8 +289,15 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                   />
                 </label>
 
-                <label className="space-y-2 text-sm font-medium sm:col-span-2">
-                  <span className="block">Description</span>
+                <label className="mb-6 space-y-2 text-sm font-medium sm:col-span-2">
+                  <div className="flex justify-between items-end">
+                    <span className="block">Description</span>
+                    {/* put ai description button here */}
+                    <button className="flex gap-2 rounded-full border bg-radial from-fuchsia-600 from-40% to-fuchsia-700 text-white px-3 py-1.5 text-xs font-semibold transition ring-fuchsia-700 ring-offset-1 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2">
+                      <Sparkles size={16} />
+                      <span>AI re-write</span>
+                    </button>
+                  </div>
                   <textarea
                     name="description"
                     rows={4}
@@ -302,7 +310,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                   />
                 </label>
 
-                <label className="space-y-2 text-sm font-medium">
+                <label className="mb-6 space-y-2 text-sm font-medium">
                   <span className="block">Date (optional)</span>
                   <input
                     name="occurredOn"
@@ -315,7 +323,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                   />
                 </label>
 
-                <label className="space-y-2 text-sm font-medium">
+                <label className="mb-6 space-y-2 text-sm font-medium">
                   <span className="block">Location (optional)</span>
                   <input
                     name="location"
@@ -328,7 +336,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                   />
                 </label>
 
-                <label className="space-y-2 text-sm font-medium sm:col-span-2">
+                <label className="mb-6 space-y-2 text-sm font-medium sm:col-span-2">
                   <span className="block">
                     Mood (optional)
                     <span className="font-light">
@@ -348,7 +356,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                 </label>
               </div>
 
-              <div className="space-y-3">
+              <div className="mb-6 space-y-3">
                 <MemoryImageUpload
                   label={isEditing ? "Replace photo" : "Add a photo (optional)"}
                   description={`Image formats ${SUPPORTED_IMAGE_MIME_TYPES_TEXT} only - up to ${MAX_IMAGE_BYTES_TEXT}.`}
@@ -372,7 +380,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
               </div>
 
               {error ? (
-                <p className="text-sm text-destructive">{error}</p>
+                <p className="mb-6 text-sm text-destructive">{error}</p>
               ) : null}
 
               <div className="flex flex-col gap-2 sm:flex-row">
