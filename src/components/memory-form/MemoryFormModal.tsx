@@ -63,6 +63,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
   const [imageFile, setImageFile] = useState<MemoryImageSelection | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   const isEditing = Boolean(memory?.id);
 
@@ -249,6 +250,63 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
     setFormValues((prev) => ({ ...prev, [key]: value }));
   }
 
+  async function handleGenerateDescription() {
+    const trimmedTitle = formValues.title.trim();
+    const trimmedDescription = formValues.description.trim();
+
+    if (!trimmedTitle || !trimmedDescription) {
+      setError("Add a title and description before using AI re-write.");
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/ai-tools/description-helper", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: trimmedTitle,
+          description: trimmedDescription,
+        }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: unknown;
+        } | null;
+        const message =
+          typeof payload?.error === "string"
+            ? payload.error
+            : "We could not generate a description. Please try again.";
+        setError(message);
+        return;
+      }
+
+      const payload = (await response.json()) as {
+        query?: string;
+      };
+
+      if (!payload.query) {
+        setError("The AI response was empty. Please try again.");
+        return;
+      }
+
+      setFormValues((prev) => ({
+        ...prev,
+        description: (payload.query ?? "").trim(),
+      }));
+    } catch (err) {
+      console.error(err);
+      setError("We could not generate a description. Please try again.");
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  }
+
   return (
     <>
       {trigger({ open: handleOpen })}
@@ -293,9 +351,17 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                   <div className="flex justify-between items-end">
                     <span className="block">Description</span>
                     {/* put ai description button here */}
-                    <button className="flex gap-2 rounded-full border bg-radial from-fuchsia-600 from-40% to-fuchsia-700 text-white px-3 py-1.5 text-xs font-semibold transition ring-fuchsia-700 ring-offset-1 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2">
+                    <button
+                      type="button"
+                      onClick={handleGenerateDescription}
+                      disabled={isGeneratingDescription || isSubmitting}
+                      className="flex gap-2 rounded-full border bg-radial from-fuchsia-600 from-40% to-fuchsia-700 text-white px-3 py-1.5 text-xs font-semibold transition ring-fuchsia-700 ring-offset-1 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:opacity-60 disabled:cursor-not-allowed">
                       <Sparkles size={16} />
-                      <span>AI re-write</span>
+                      <span>
+                        {isGeneratingDescription
+                          ? "Thinking..."
+                          : "AI re-write"}
+                      </span>
                     </button>
                   </div>
                   <textarea
