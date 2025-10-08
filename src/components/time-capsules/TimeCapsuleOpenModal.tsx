@@ -32,13 +32,24 @@ type CapsuleResponse =
       openOn?: string;
     };
 
+function toDate(value: string | null) {
+  if (!value) {
+    return null;
+  }
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date;
+}
+
 function formatDate(value: string | null) {
+  const date = toDate(value);
   if (!value) {
     return null;
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  if (!date) {
     return value;
   }
 
@@ -46,8 +57,6 @@ function formatDate(value: string | null) {
     year: "numeric",
     month: "short",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
   }).format(date);
 }
 
@@ -72,14 +81,24 @@ export function TimeCapsuleOpenModal({
       return true;
     }
 
-    const now = new Date();
-    const openDate = new Date(openOn);
+    const today = new Date();
+    const openDate = toDate(openOn);
 
-    if (Number.isNaN(openDate.getTime())) {
+    if (!openDate) {
       return false;
     }
 
-    return now >= openDate;
+    const todayMidnight = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+
+    return todayMidnight >= openDate;
   }, [openOn, openedTimestamp]);
 
   useEffect(() => {

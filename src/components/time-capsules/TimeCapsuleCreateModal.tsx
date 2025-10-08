@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import {
   useCallback,
   useEffect,
-  useRef,
   useState,
   type ReactNode,
   type FormEvent,
@@ -28,19 +27,10 @@ type TimeCapsuleCreateModalProps = {
 
 function resolveMinDate() {
   const now = new Date();
-  const startOfDayLocal = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    0,
-    0,
-    0,
-    0,
-  );
-  const adjusted = new Date(
-    startOfDayLocal.getTime() - startOfDayLocal.getTimezoneOffset() * 60000,
-  );
-  return adjusted.toISOString().slice(0, 16);
+  const year = now.getFullYear();
+  const month = `${now.getMonth() + 1}`.padStart(2, "0");
+  const day = `${now.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function TimeCapsuleCreateModal({
@@ -54,8 +44,6 @@ export function TimeCapsuleCreateModal({
   const [error, setError] = useState<string | null>(null);
 
   const minDate = resolveMinDate();
-
-  const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -101,9 +89,9 @@ export function TimeCapsuleCreateModal({
       return;
     }
 
-    const openOnDate = new Date(openOnRaw);
+    const openOnDate = new Date(`${openOnRaw}T00:00:00`);
     if (Number.isNaN(openOnDate.getTime())) {
-      setError("Please choose a valid date and time.");
+      setError("Please choose a valid date.");
       return;
     }
 
@@ -119,7 +107,7 @@ export function TimeCapsuleCreateModal({
         body: JSON.stringify({
           title,
           message,
-          openOn: openOnDate.toISOString(),
+          openOn: openOnRaw,
         }),
       });
 
@@ -151,9 +139,7 @@ export function TimeCapsuleCreateModal({
       {trigger({ open: openModal })}
       {isOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-          <div
-            ref={modalRef}
-            className="overflow-y-scroll max-h-full relative w-full max-w-xl rounded-2xl bg-white p-6">
+          <div className="overflow-y-scroll max-h-full relative w-full max-w-xl rounded-2xl bg-white p-6">
             <button
               type="button"
               onClick={closeModal}
@@ -199,7 +185,7 @@ export function TimeCapsuleCreateModal({
               <label className="space-y-2 text-sm font-medium">
                 <span className="block">Opens on</span>
                 <input
-                  type="datetime-local"
+                  type="date"
                   min={minDate}
                   value={formValues.openOn}
                   onChange={(event) =>

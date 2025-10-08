@@ -69,8 +69,8 @@ export const timeCapsules = pgTable(
     clerkId: text("clerk_id").notNull(),
     title: text("title").notNull(),
     message: text("message").notNull(),
-    openOn: timestamp("open_on", { withTimezone: true }).notNull(),
-    openedAt: timestamp("opened_at", { withTimezone: true }),
+    openOn: date("open_on").notNull(),
+    openedAt: date("opened_at"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

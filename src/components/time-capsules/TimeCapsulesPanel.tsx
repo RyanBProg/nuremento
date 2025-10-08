@@ -17,9 +17,35 @@ type TimeCapsulesPanelProps = {
   capsules: TimeCapsuleSummary[];
 };
 
-function formatDate(value: string) {
-  const date = new Date(value);
+function toDate(value: string) {
+  if (!value) {
+    return null;
+  }
+  const date = value.includes("T")
+    ? new Date(value)
+    : new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date;
+}
+
+function formatDateOnly(value: string) {
+  const date = toDate(value);
+  if (!date) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+function formatDateTime(value: string) {
+  const date = toDate(value);
+  if (!date) {
     return value;
   }
 
@@ -38,6 +64,15 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
     const unlockedCapsules: TimeCapsuleSummary[] = [];
 
     const now = new Date();
+    const todayMidnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
 
     for (const capsule of capsules) {
       if (capsule.openedAt) {
@@ -45,8 +80,8 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
         continue;
       }
 
-      const openDate = new Date(capsule.openOn);
-      if (!Number.isNaN(openDate.getTime()) && openDate <= now) {
+      const openDate = toDate(capsule.openOn);
+      if (openDate && openDate <= todayMidnight) {
         unlockedCapsules.push(capsule);
       } else {
         lockedCapsules.push(capsule);
@@ -97,15 +132,15 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                     className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
                     <div className="space-y-2">
                       <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-                        {formatDate(capsule.openOn)}
+                        {formatDateOnly(capsule.openOn)}
                       </p>
                       <h4 className="text-lg font-semibold">{capsule.title}</h4>
                       <p className="text-xs text-neutral-500">
-                        Created {formatDate(capsule.createdAt)}
+                        Created {formatDateTime(capsule.createdAt)}
                       </p>
                       {capsule.openedAt ? (
                         <p className="text-xs text-neutral-500">
-                          Opened {formatDate(capsule.openedAt)}
+                          Opened {formatDateOnly(capsule.openedAt)}
                         </p>
                       ) : null}
                     </div>
@@ -142,11 +177,11 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
                     className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
                     <div className="space-y-2">
                       <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-                        Unlocks {formatDate(capsule.openOn)}
+                        Unlocks {formatDateOnly(capsule.openOn)}
                       </p>
                       <h4 className="text-lg font-semibold">{capsule.title}</h4>
                       <p className="text-xs text-neutral-500">
-                        Created {formatDate(capsule.createdAt)}
+                        Created {formatDateTime(capsule.createdAt)}
                       </p>
                     </div>
 

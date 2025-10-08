@@ -3,6 +3,7 @@ import {
   differenceInCalendarDays,
   isBefore,
   isValid,
+  parseISO,
   startOfDay,
 } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +19,7 @@ function parseAndValidateOpenDate(raw: unknown) {
     return { error: "openOn must be an ISO date string." } as const;
   }
 
-  const openDate = new Date(raw);
+  const openDate = parseISO(raw);
 
   if (!isValid(openDate)) {
     return { error: "openOn is not a valid date." } as const;
@@ -27,7 +28,7 @@ function parseAndValidateOpenDate(raw: unknown) {
   const now = new Date();
   const earliestAllowed = startOfDay(now);
 
-  if (openDate < earliestAllowed) {
+  if (isBefore(openDate, earliestAllowed)) {
     return { error: "openOn must be today or later." } as const;
   }
 
@@ -125,9 +126,11 @@ export async function POST(request: NextRequest) {
         id: record.id,
         title: record.title,
         message: record.message,
-        openOn: record.openOn,
-        openedAt: record.openedAt,
-        createdAt: record.createdAt,
+        openOn: record.openOn?.toISOString?.().slice(0, 10) ?? record.openOn,
+        openedAt:
+          record.openedAt?.toISOString?.().slice(0, 10) ?? record.openedAt,
+        createdAt:
+          record.createdAt?.toISOString?.() ?? record.createdAt?.toString?.(),
       },
     },
     { status: 201 }
@@ -164,9 +167,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const now = new Date();
+  const today = startOfDay(new Date());
+  const openOnValue =
+    typeof capsule.openOn === "string"
+      ? parseISO(capsule.openOn)
+      : capsule.openOn ?? new Date(0);
 
-  if (isBefore(now, capsule.openOn)) {
+  if (isBefore(today, startOfDay(openOnValue))) {
     return NextResponse.json(
       {
         error: "This time capsule is still locked.",
@@ -176,11 +183,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const openedAt = new Date();
+  const openedAt = today;
 
   await db
     .delete(timeCapsules)
     .where(and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId)));
+
+  const openOnResponse =
+    capsule.openOn instanceof Date
+      ? capsule.openOn.toISOString().slice(0, 10)
+      : typeof capsule.openOn === "string"
+      ? capsule.openOn
+      : null;
 
   return NextResponse.json(
     {
@@ -188,8 +202,8 @@ export async function GET(request: NextRequest) {
         id: capsule.id,
         title: capsule.title,
         message: capsule.message,
-        openOn: capsule.openOn,
-        openedAt,
+        openOn: openOnResponse,
+        openedAt: openedAt.toISOString().slice(0, 10),
       },
     },
     { status: 200 }

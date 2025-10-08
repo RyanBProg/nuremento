@@ -140,6 +140,18 @@ export default async function Home() {
         </div>
       </section>
 
+      <div className="flex m-10">
+        <div className="bg-purple-500 w-44 h-36 rounded-l-full relative border">
+          <div className="z-10 absolute size-8 rounded-full bg-amber-600 right-0 translate-x-1/2 bottom-0 translate-y-1/2 border flex justify-center items-center">
+            <div className="size-4 rounded-full bg-amber-700 border"></div>
+          </div>
+          <div className="z-10 absolute size-18 rounded-full bg-neutral-100 right-0 translate-x-1/2 top-4 border flex justify-center items-center">
+            <div className="size-10 rounded-full bg-white border"></div>
+          </div>
+        </div>
+        <div className="bg-blue-500 w-44 h-36 rounded-r-full border"></div>
+      </div>
+
       <section id="purpose" className="bg-white py-20 lg:py-44">
         <div className="py-10 px-4 xs:px-8 border-y font-bold text-3xl">
           <h2 className="text-center">Pure memories, free from distraction</h2>
