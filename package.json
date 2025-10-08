@@ -16,6 +16,7 @@
     "@clerk/nextjs": "^6.33.1",
     "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.2",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "file-type": "^18.7.0",

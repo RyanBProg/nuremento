@@ -28,8 +28,19 @@ type TimeCapsuleCreateModalProps = {
 
 function resolveMinDate() {
   const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  return now.toISOString().slice(0, 16);
+  const startOfDayLocal = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+  const adjusted = new Date(
+    startOfDayLocal.getTime() - startOfDayLocal.getTimezoneOffset() * 60000,
+  );
+  return adjusted.toISOString().slice(0, 16);
 }
 
 export function TimeCapsuleCreateModal({

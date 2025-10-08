@@ -1,7 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
-import { differenceInCalendarDays, isAfter, isBefore, isValid } from "date-fns";
+import {
+  differenceInCalendarDays,
+  isBefore,
+  isValid,
+  startOfDay,
+} from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { timeCapsules } from "@/db/schema";
@@ -20,9 +25,10 @@ function parseAndValidateOpenDate(raw: unknown) {
   }
 
   const now = new Date();
+  const earliestAllowed = startOfDay(now);
 
-  if (!isAfter(openDate, now)) {
-    return { error: "openOn must be in the future." } as const;
+  if (openDate < earliestAllowed) {
+    return { error: "openOn must be today or later." } as const;
   }
 
   if (differenceInCalendarDays(openDate, now) > MAX_FUTURE_DAYS) {
@@ -37,6 +43,18 @@ export async function POST(request: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(timeCapsules)
+    .where(eq(timeCapsules.clerkId, userId));
+
+  if (Number(count ?? 0) >= 10) {
+    return NextResponse.json(
+      { error: "You have reached the maximum of 10 time capsules." },
+      { status: 400 }
+    );
   }
 
   let body: unknown;
@@ -148,21 +166,6 @@ export async function GET(request: NextRequest) {
 
   const now = new Date();
 
-  if (capsule.openedAt) {
-    return NextResponse.json(
-      {
-        capsule: {
-          id: capsule.id,
-          title: capsule.title,
-          message: capsule.message,
-          openOn: capsule.openOn,
-          openedAt: capsule.openedAt,
-        },
-      },
-      { status: 200 }
-    );
-  }
-
   if (isBefore(now, capsule.openOn)) {
     return NextResponse.json(
       {
@@ -173,20 +176,20 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const [updated] = await db
-    .update(timeCapsules)
-    .set({ openedAt: now, updatedAt: now })
-    .where(and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId)))
-    .returning();
+  const openedAt = new Date();
+
+  await db
+    .delete(timeCapsules)
+    .where(and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId)));
 
   return NextResponse.json(
     {
       capsule: {
-        id: updated.id,
-        title: updated.title,
-        message: updated.message,
-        openOn: updated.openOn,
-        openedAt: updated.openedAt ?? now,
+        id: capsule.id,
+        title: capsule.title,
+        message: capsule.message,
+        openOn: capsule.openOn,
+        openedAt,
       },
     },
     { status: 200 }
