@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
-
 import { TimeCapsuleCreateModal } from "./TimeCapsuleCreateModal";
-import { TimeCapsuleOpenModal } from "./TimeCapsuleOpenModal";
 import TimeCapsule from "./TimeCapsule";
+import { MoveRight } from "lucide-react";
+import { formatDateOnly } from "@/lib/utils";
 
 export type TimeCapsuleSummary = {
   id: string;
@@ -12,194 +11,66 @@ export type TimeCapsuleSummary = {
   openOn: string;
   openedAt: string | null;
   createdAt: string;
+  message?: string | null;
 };
 
 type TimeCapsulesPanelProps = {
   capsules: TimeCapsuleSummary[];
 };
 
-function toDate(value: string) {
-  if (!value) {
-    return null;
-  }
-  const date = value.includes("T")
-    ? new Date(value)
-    : new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-  return date;
-}
-
-function formatDateOnly(value: string) {
-  const date = toDate(value);
-  if (!date) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date);
-}
-
-function formatDateTime(value: string) {
-  const date = toDate(value);
-  if (!date) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
-  const { locked, unlocked } = useMemo(() => {
-    const lockedCapsules: TimeCapsuleSummary[] = [];
-    const unlockedCapsules: TimeCapsuleSummary[] = [];
-
-    const now = new Date();
-    const todayMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0,
-      0
-    );
-
-    for (const capsule of capsules) {
-      if (capsule.openedAt) {
-        unlockedCapsules.push(capsule);
-        continue;
-      }
-
-      const openDate = toDate(capsule.openOn);
-      if (openDate && openDate <= todayMidnight) {
-        unlockedCapsules.push(capsule);
-      } else {
-        lockedCapsules.push(capsule);
-      }
-    }
-
-    return {
-      locked: lockedCapsules,
-      unlocked: unlockedCapsules,
-    };
-  }, [capsules]);
-
-  const hasAny = capsules.length > 0;
-
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-lg border bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Time capsules</h2>
-          <p className="text-sm text-neutral-600">
-            Schedule notes to your future self and open them when the moment
-            arrives.
-          </p>
+    <section className="border-b bg-white">
+      <div className="mx-auto max-w-6xl py-20 lg:border-x">
+        <div className="px-4 sm:px-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold">Time capsules</h2>
+            <p className="text-sm text-neutral-600">
+              Schedule notes to your future self and open them when the moment
+              arrives.
+            </p>
+          </div>
+          <TimeCapsuleCreateModal
+            trigger={({ open }) => (
+              <button type="button" onClick={open} className="button-filled">
+                Create capsule
+              </button>
+            )}
+          />
         </div>
-        <TimeCapsuleCreateModal
-          trigger={({ open }) => (
-            <button
-              type="button"
-              onClick={open}
-              className="self-start rounded-full border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
-              Create capsule
-            </button>
-          )}
-        />
-      </div>
 
-      {hasAny ? (
-        <div className="space-y-6">
-          {unlocked.length > 0 ? (
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {capsules.length > 0 ? (
+          <div>
+            <ul className="mt-14 flex gap-4 overflow-scroll px-4 sm:px-8 pb-5">
               {capsules.map((capsule) => (
                 <li
                   key={capsule.id}
-                  className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4 shadow-[5px_5px_0_rgba(0,0,0,1)]">
-                  <TimeCapsule isReady={true} capsule={capsule} />
-                  <div className="space-y-2">
-                    <h4 className="text-lg font-semibold">{capsule.title}</h4>
+                  className="max-w-min flex flex-col justify-between gap-3">
+                  <TimeCapsule capsule={capsule} />
+                  <div className="mt-5 space-y-2">
+                    <h4 className="text-lg font-semibold max-w-[250px] md:max-w-[350px] truncate">
+                      {capsule.title}
+                    </h4>
                     <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
                       {formatDateOnly(capsule.openOn)}
                     </p>
                   </div>
-
-                  <TimeCapsuleOpenModal
-                    capsuleId={capsule.id}
-                    title={capsule.title}
-                    openOn={capsule.openOn}
-                    openedAt={capsule.openedAt}
-                    trigger={({ open }) => (
-                      <button
-                        type="button"
-                        onClick={open}
-                        className="rounded-full border border-black bg-black px-3 py-2 text-sm font-semibold text-white transition hover:bg-neutral-900">
-                        Open capsule
-                      </button>
-                    )}
-                  />
                 </li>
               ))}
             </ul>
-          ) : null}
-
-          {locked.length > 0 ? (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-600">
-                Locked
-              </h3>
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {locked.map((capsule) => (
-                  <li
-                    key={capsule.id}
-                    className="flex flex-col justify-between gap-3 rounded-xl border bg-background p-4">
-                    <div className="space-y-2">
-                      <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-                        Unlocks {formatDateOnly(capsule.openOn)}
-                      </p>
-                      <h4 className="text-lg font-semibold">{capsule.title}</h4>
-                      <p className="text-xs text-neutral-500">
-                        Created {formatDateTime(capsule.createdAt)}
-                      </p>
-                    </div>
-
-                    <TimeCapsuleOpenModal
-                      capsuleId={capsule.id}
-                      title={capsule.title}
-                      openOn={capsule.openOn}
-                      openedAt={capsule.openedAt}
-                      trigger={({ open, disabled }) => (
-                        <button
-                          type="button"
-                          onClick={open}
-                          disabled={disabled}
-                          className="rounded-full border px-3 py-2 text-sm font-medium text-neutral-600 transition disabled:cursor-not-allowed disabled:opacity-60">
-                          Locked
-                        </button>
-                      )}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-neutral-600">
-          No time capsules yet. Create one to surprise your future self.
-        </div>
-      )}
+            {capsules.length > 2 && (
+              <div className="px-4 sm:px-8 mt-5 flex gap-4 text-neutral-500 items-center">
+                <span>Scroll to see more</span>
+                <MoveRight size={20} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mt-5 mx-4 sm:mx-8 rounded-lg border border-dashed p-10 text-center text-sm text-neutral-600">
+            No time capsules yet. Create one to surprise your future self.
+          </div>
+        )}
+      </div>
     </section>
   );
 }
