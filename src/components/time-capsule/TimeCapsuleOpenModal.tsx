@@ -9,12 +9,19 @@ import {
   type ReactNode,
 } from "react";
 
+type LoaderResult = {
+  message: string;
+  openedAt?: string | null;
+  openOn?: string;
+};
+
 type TimeCapsuleOpenModalProps = {
-  showcase?: boolean;
   capsuleId: string;
   title: string;
   openOn: string;
-  openedAt: string | null;
+  message?: string | null;
+  loader?: () => Promise<LoaderResult>;
+  canOpenOverride?: boolean;
   trigger: (props: { open: () => void; disabled?: boolean }) => ReactNode;
 };
 
@@ -65,7 +72,9 @@ export function TimeCapsuleOpenModal({
   capsuleId,
   title,
   openOn,
-  openedAt,
+  message: initialMessage,
+  loader,
+  canOpenOverride,
   trigger,
 }: TimeCapsuleOpenModalProps) {
   const router = useRouter();
@@ -73,13 +82,35 @@ export function TimeCapsuleOpenModal({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [openedTimestamp, setOpenedTimestamp] = useState<string | null>(
-    openedAt
-  );
+  const [displayOpenOn, setDisplayOpenOn] = useState<string>(openOn);
+
+  const defaultLoader = useCallback(async () => {
+    const response = await fetch(`/api/time-capsules?id=${capsuleId}`, {
+      method: "GET",
+    });
+
+    const payload = (await response.json()) as CapsuleResponse;
+
+    if (!response.ok || !("capsule" in payload)) {
+      const messageText =
+        "error" in payload
+          ? payload.error
+          : "We could not open this time capsule. Please try again.";
+      throw new Error(messageText);
+    }
+
+    router.refresh();
+
+    return {
+      message: payload.capsule.message,
+      openedAt: payload.capsule.openedAt ?? payload.capsule.openOn,
+      openOn: payload.capsule.openOn,
+    };
+  }, [capsuleId, router]);
 
   const isUnlocked = useMemo(() => {
-    if (openedTimestamp) {
-      return true;
+    if (typeof canOpenOverride === "boolean") {
+      return canOpenOverride;
     }
 
     const today = new Date();
@@ -100,51 +131,50 @@ export function TimeCapsuleOpenModal({
     );
 
     return todayMidnight >= openDate;
-  }, [openOn, openedTimestamp]);
+  }, [canOpenOverride, openOn]);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
-    async function fetchCapsule() {
+    async function loadCapsule() {
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`/api/time-capsules?id=${capsuleId}`, {
-          method: "GET",
-        });
-
-        const payload = (await response.json()) as CapsuleResponse;
-
-        if (!response.ok || !("capsule" in payload)) {
-          const messageText =
-            "error" in payload
-              ? payload.error
-              : "We could not open this time capsule. Please try again.";
-          setError(messageText);
+        if (initialMessage && !loader) {
+          setMessage(initialMessage);
+          setDisplayOpenOn(openOn);
           return;
         }
 
-        setMessage(payload.capsule.message);
-        setOpenedTimestamp(payload.capsule.openedAt ?? payload.capsule.openOn);
-        router.refresh();
+        const loaderFn = loader ?? defaultLoader;
+        const result = await loaderFn();
+
+        setMessage(result.message);
+        if (result.openOn) {
+          setDisplayOpenOn(result.openOn);
+        }
       } catch (err) {
         console.error(err);
-        setError("We could not open this time capsule. Please try again.");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "We could not open this time capsule. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }
     }
 
     if (isUnlocked) {
-      void fetchCapsule();
+      void loadCapsule();
     } else {
       setError("This time capsule is still locked.");
       setIsLoading(false);
     }
-  }, [capsuleId, isOpen, isUnlocked, router]);
+  }, [defaultLoader, initialMessage, isOpen, isUnlocked, loader, openOn]);
 
   const handleOpen = useCallback(() => {
     setIsOpen(true);
@@ -174,7 +204,7 @@ export function TimeCapsuleOpenModal({
 
             <h2 className="text-xl font-semibold">{title}</h2>
             <p className="mt-1 text-sm text-neutral-600">
-              Opens on {formatDate(openOn) ?? "Unknown date"}
+              Opens on {formatDate(displayOpenOn) ?? "Unknown date"}
             </p>
 
             <div className="mt-6 space-y-4 text-sm text-neutral-700">
@@ -186,9 +216,6 @@ export function TimeCapsuleOpenModal({
                 <>
                   <p className="whitespace-pre-wrap leading-relaxed">
                     {message}
-                  </p>
-                  <p className="text-xs text-neutral-500">
-                    Opened {formatDate(openedTimestamp) ?? "just now"}
                   </p>
                 </>
               ) : (

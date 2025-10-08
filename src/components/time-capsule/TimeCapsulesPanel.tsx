@@ -9,9 +9,7 @@ export type TimeCapsuleSummary = {
   id: string;
   title: string;
   openOn: string;
-  openedAt: string | null;
-  createdAt: string;
-  message?: string | null;
+  message?: string;
 };
 
 type TimeCapsulesPanelProps = {

@@ -16,11 +16,26 @@ export function formatDate(value: string | Date | null): string {
   }).format(date);
 }
 
-export function toDate(value: string | null) {
+export function formatDateOnly(value: string) {
+  const date = toDate(value);
+  if (!date) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+function toDate(value: string) {
   if (!value) {
     return null;
   }
-  const date = new Date(`${value}T00:00:00`);
+  const date = value.includes("T")
+    ? new Date(value)
+    : new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) {
     return null;
   }

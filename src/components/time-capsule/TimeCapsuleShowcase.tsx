@@ -39,7 +39,7 @@ export function TimeCapsuleShowcase() {
           </span>
           <button
             onClick={() => setIsReady((value) => !value)}
-            className={`border relative inline-flex h-6 sm:h-8 w-12 sm:w-16 items-center rounded-full transition-colors duration-500 ${
+            className={`border relative inline-flex h-6 sm:h-8 w-12 sm:w-16 items-center rounded-full transition-colors duration-500 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
               isReady
                 ? "bg-gradient-to-r from-green-400 to-green-500"
                 : "bg-gradient-to-r from-red-500 to-red-400"

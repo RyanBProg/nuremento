@@ -18,27 +18,10 @@ export async function TimeCapsulesDashboardSection({
     .orderBy(asc(timeCapsules.openOn));
 
   const summaries = capsules.map((capsule) => {
-    const openOnValue =
-      capsule.openOn instanceof Date
-        ? capsule.openOn.toISOString()
-        : String(capsule.openOn);
-    const openedAtValue =
-      capsule.openedAt instanceof Date
-        ? capsule.openedAt.toISOString()
-        : capsule.openedAt
-        ? String(capsule.openedAt)
-        : null;
-    const createdAtValue =
-      capsule.createdAt instanceof Date
-        ? capsule.createdAt.toISOString()
-        : String(capsule.createdAt);
-
     return {
       id: capsule.id,
       title: capsule.title,
-      openOn: openOnValue,
-      openedAt: openedAtValue,
-      createdAt: createdAtValue,
+      openOn: capsule.openOn,
     };
   });
 
