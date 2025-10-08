@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type ChangeEvent,
-} from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { MemoryCard } from "@/components/memory/MemoryCard";
@@ -94,7 +89,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
 
   async function handleDelete(memory: MemoryRecord) {
     const confirmed = window.confirm(
-      `Delete “${memory.title}”? This action cannot be undone.`,
+      `Delete “${memory.title}”? This action cannot be undone.`
     );
 
     if (!confirmed) {
@@ -145,7 +140,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
           thumbnailUrl: memory.thumbnailUrl,
         } satisfies MemoryFormData,
       })),
-    [memories],
+    [memories]
   );
 
   const availableYears = useMemo(() => {
@@ -171,32 +166,30 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
       return year === selectedYear;
     });
 
-    const sorted = filtered
-      .slice()
-      .sort((a, b) => {
-        const aValue =
-          toTimestamp(a.record.occurredOn) ||
-          toTimestamp(a.record.createdAt) ||
-          toTimestamp(a.record.updatedAt);
-        const bValue =
-          toTimestamp(b.record.occurredOn) ||
-          toTimestamp(b.record.createdAt) ||
-          toTimestamp(b.record.updatedAt);
+    const sorted = filtered.slice().sort((a, b) => {
+      const aValue =
+        toTimestamp(a.record.occurredOn) ||
+        toTimestamp(a.record.createdAt) ||
+        toTimestamp(a.record.updatedAt);
+      const bValue =
+        toTimestamp(b.record.occurredOn) ||
+        toTimestamp(b.record.createdAt) ||
+        toTimestamp(b.record.updatedAt);
 
-        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
-      });
+      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+    });
 
     return sorted;
   }, [mappedMemories, selectedYear, sortOrder]);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(processedMemories.length / PAGE_SIZE),
+    Math.ceil(processedMemories.length / PAGE_SIZE)
   );
 
   useEffect(() => {
     setCurrentPage((previous) =>
-      previous > totalPages ? totalPages : Math.max(previous, 1),
+      previous > totalPages ? totalPages : Math.max(previous, 1)
     );
   }, [totalPages]);
 
@@ -207,14 +200,11 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const visibleMemories = processedMemories.slice(
     startIndex,
-    startIndex + PAGE_SIZE,
+    startIndex + PAGE_SIZE
   );
 
-  const startDisplay = processedMemories.length ? startIndex + 1 : 0;
-  const endDisplay = startIndex + visibleMemories.length;
   const hasAnyMemories = mappedMemories.length > 0;
   const hasFilteredResults = visibleMemories.length > 0;
-  const showPagination = totalPages > 1;
 
   function handleYearChange(event: ChangeEvent<HTMLSelectElement>) {
     setSelectedYear(event.target.value);
@@ -237,7 +227,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="bg-white">
       {globalError ? (
         <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {globalError}
@@ -246,15 +236,14 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
 
       {hasAnyMemories ? (
         <>
-          <div className="flex flex-col gap-4 rounded-lg border bg-white p-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-6">
+          <div className="mx-auto max-w-6xl py-4 px-4 xs:px-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="w-full flex justify-between">
               <label className="flex flex-col gap-2 text-sm font-medium text-neutral-700">
                 <span>Filter by year</span>
                 <select
                   value={selectedYear}
                   onChange={handleYearChange}
-                  className="rounded-full border px-3 py-2 text-sm text-neutral-700 transition hover:border-neutral-400"
-                >
+                  className="button-border">
                   <option value="all">All years</option>
                   {availableYears.map((year) => (
                     <option key={year} value={year}>
@@ -264,34 +253,28 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                 </select>
               </label>
 
-              <label className="flex flex-col gap-2 text-sm font-medium text-neutral-700">
+              <label className="flex flex-col items-end gap-2 text-sm font-medium text-neutral-700">
                 <span>Sort by</span>
                 <select
                   value={sortOrder}
                   onChange={handleSortChange}
-                  className="rounded-full border px-3 py-2 text-sm text-neutral-700 transition hover:border-neutral-400"
-                >
+                  className="button-border">
                   <option value="desc">Newest to oldest</option>
                   <option value="asc">Oldest to newest</option>
                 </select>
               </label>
             </div>
-
-            <div className="text-xs text-neutral-600">
-              Showing {startDisplay}–{endDisplay} of {processedMemories.length}{" "}
-              memories
-            </div>
           </div>
 
           {hasFilteredResults ? (
             <>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="pb-10 mx-auto max-w-6xl px-4 xs:px-8 gap-6 grid sm:grid-cols-2 lg:grid-cols-3">
                 {visibleMemories.map(({ record: memory, formData }) => {
                   const isDeleting = deletingId === memory.id;
 
                   const subtitleParts: string[] = [];
                   const displayDate = resolveDisplayDate(
-                    memory.occurredOnDisplay,
+                    memory.occurredOnDisplay
                   );
 
                   if (displayDate) {
@@ -324,18 +307,16 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                               <button
                                 type="button"
                                 onClick={open}
-                                className="flex-1 rounded-full border px-3 py-2 text-sm font-medium transition hover:bg-muted hover:cursor-pointer"
-                              >
+                                className="flex-1 button-filled">
                                 Edit
                               </button>
                             )}
                           />
                           <button
                             type="button"
-                            className="flex-1 rounded-full border border-destructive px-3 py-2 text-sm font-medium text-destructive transition hover:bg-destructive/10 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-70"
+                            className="flex-1 button-border disabled:cursor-not-allowed disabled:opacity-70"
                             onClick={() => handleDelete(memory)}
-                            disabled={isDeleting}
-                          >
+                            disabled={isDeleting}>
                             {isDeleting ? "Deleting…" : "Delete"}
                           </button>
                         </div>
@@ -345,41 +326,39 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                 })}
               </div>
 
-              {showPagination ? (
-                <div className="flex flex-col items-center justify-between gap-3 rounded-lg border bg-white p-4 text-sm text-neutral-700 sm:flex-row">
-                  <div>
-                    Page {currentPage} of {totalPages}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={goToPreviousPage}
-                      disabled={currentPage === 1}
-                      className="rounded-full border px-3 py-2 transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={goToNextPage}
-                      disabled={currentPage === totalPages}
-                      className="rounded-full border px-3 py-2 transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      Next
-                    </button>
-                  </div>
+              <div className="pb-10 mx-auto max-w-6xl px-4 xs:px-8 flex items-center justify-between py-4 text-sm">
+                <div>
+                  Page {currentPage} of {totalPages}
                 </div>
-              ) : null}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="button-border">
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="button-border">
+                    Next
+                  </button>
+                </div>
+              </div>
             </>
           ) : (
-            <div className="rounded-lg border border-dashed p-10 text-center text-sm text-neutral-600">
-              No memories match the selected filters.
+            <div>
+              <p className="text-center text-sm text-neutral-600">
+                No memories match the selected filters.
+              </p>
             </div>
           )}
         </>
       ) : (
         <div className="rounded-lg border border-dashed p-10 text-center text-sm text-neutral-600">
-          You haven’t created any memories yet.
+          You haven&apos;t created any memories yet.
         </div>
       )}
     </div>

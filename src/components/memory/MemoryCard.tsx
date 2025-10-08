@@ -37,7 +37,7 @@ export function MemoryCard({
         <div className="aspect-square w-full">{thumbnailFallback}</div>
       ) : null}
 
-      <div className="space-y-2">
+      <div className="flex-1 space-y-2">
         {subtitle ? (
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
             {subtitle}

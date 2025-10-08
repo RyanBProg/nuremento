@@ -74,8 +74,8 @@ export async function RecentMemoriesSection({
 
   return (
     <section className="bg-white">
-      <div className="py-20 lg:py-44 px-0 lg:px-8 mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="py-20 mx-auto max-w-6xl space-y-6">
+        <div className="mb-8 md:mb-14 px-4 xs:px-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
             <h2 className="text-lg md:text-2xl font-semibold">
               Recent memories
@@ -84,16 +84,21 @@ export async function RecentMemoriesSection({
               Catch up on the latest moments you&apos;ve captured.
             </p>
           </div>
-          <Link href="/dashboard/memories" className="button-border self-start">
+          <Link href="/dashboard/memories" className="button-border w-fit">
             View all memories
           </Link>
         </div>
 
         {hasMemories ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {memories.map((memory) => (
+          <div className="px-4 xs:px-8 grid justify-center gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {memories.map((memory, index) => (
               <MemoryCard
                 key={memory.id}
+                className={`justify-self-center ${
+                  index === memories.length - 1
+                    ? "md:col-span-2 lg:col-span-1"
+                    : ""
+                }`}
                 title={memory.title}
                 subtitle={buildSubtitle(memory)}
                 description={memory.description}
@@ -103,6 +108,7 @@ export async function RecentMemoriesSection({
           </div>
         ) : (
           <MemoryCard
+            className="mx-auto"
             title="No recent memories yet"
             description="Once you start logging memories, your most recent entries will show up here for easy access."
             actions={<CreateMemoryButton />}

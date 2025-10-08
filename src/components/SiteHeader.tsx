@@ -11,8 +11,8 @@ import {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-20 border-b bg-background px-4 xs:px-8">
-      <div className="mx-auto max-w-6xl flex min-h-[70px] items-center justify-between gap-4">
+    <header className="sticky top-0 z-20 border-b bg-background">
+      <div className="px-4 xs:px-8 mx-auto max-w-6xl flex min-h-[70px] items-center justify-between gap-4">
         <nav className="flex gap-2 items-center text-sm" aria-label="Primary">
           <Link
             href="/"

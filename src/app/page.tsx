@@ -48,9 +48,16 @@ export default async function Home() {
 
   return (
     <div>
-      <section className="border-b">
-        <div className="py-32 lg:pb-52 mx-auto max-w-6xl">
-          <div className="px-4 xs:px-8 mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
+      <section className="border-b overflow-clip">
+        <div className="pt-10 pb-32 md:pt-32 md:pb-52 mx-auto max-w-6xl">
+          <div className="relative px-4 xs:px-8 mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
+            <Image
+              className="mx-auto size-[260px] md:size-[400px] md:absolute md:bottom-22 md:translate-y-full md:-right-20 lg:-right-44 -z-10"
+              src="/images/memory-card.png"
+              alt="memory card"
+              height={400}
+              width={400}
+            />
             <span className="inline-flex items-center justify-center rounded-full text-xs font-semibold uppercase tracking-[0.2em]">
               Your companion for meaningful recall
             </span>
@@ -62,10 +69,10 @@ export default async function Home() {
               revisit them through mindful, unique experiences.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link className="button-filled" href={primaryCta.href}>
+              <Link className="button-border" href={primaryCta.href}>
                 {primaryCta.label}
               </Link>
-              <Link className="button-border" href={secondaryCta.href}>
+              <Link className="button-filled" href={secondaryCta.href}>
                 {secondaryCta.label}
               </Link>
             </div>

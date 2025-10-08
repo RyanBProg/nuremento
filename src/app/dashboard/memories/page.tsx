@@ -30,16 +30,18 @@ export default async function MemoriesPage() {
   );
 
   return (
-    <div className="space-y-8">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">Your Memories</h1>
-          <p className="text-sm text-neutral-600">
-            Browse, edit, or remove your saved memories.
-          </p>
+    <div className="flex-1 flex flex-col">
+      <section className="border-b">
+        <div className="mx-auto max-w-6xl py-10 px-4 xs:px-8 flex flex-col items-center gap-3">
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-semibold">Your Memories</h1>
+            <p className="text-sm text-neutral-600">
+              Browse, edit, or remove your saved memories.
+            </p>
+          </div>
+          <CreateMemoryButton />
         </div>
-        <CreateMemoryButton />
-      </header>
+      </section>
 
       <MemoriesList initialMemories={memoriesWithThumbnails} />
     </div>

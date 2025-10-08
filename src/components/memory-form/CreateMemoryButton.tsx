@@ -6,7 +6,7 @@ export function CreateMemoryButton() {
   return (
     <MemoryFormModal
       trigger={({ open }) => (
-        <button type="button" onClick={open} className="button-filled">
+        <button type="button" onClick={open} className="button-filled w-fit">
           Log a memory
         </button>
       )}
