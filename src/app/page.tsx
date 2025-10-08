@@ -119,7 +119,28 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="purpose" className="py-20 lg:py-44">
+      <section id="ai" className="border-b pt-12 pb-64 lg:py-20 overflow-clip">
+        <div className="mx-auto max-w-6xl relative px-4 xs:px-8">
+          <div>
+            <h2 className="text-center lg:text-right font-bold text-3xl">
+              Get a little help from AI
+            </h2>
+            <p className="text-neutral-700 text-center lg:text-right">
+              Bringing your memories to life with AI to invigorate your
+              experiences
+            </p>
+          </div>
+          <Image
+            className="absolute top-32 xs:top-24 left-1/2 -translate-x-1/2 lg:translate-0 lg:-top-32 lg:left-0"
+            src="/images/memory-ai-card.png"
+            alt="memory card"
+            height={400}
+            width={400}
+          />
+        </div>
+      </section>
+
+      <section id="purpose" className="bg-white py-20 lg:py-44">
         <div className="py-10 px-4 xs:px-8 border-y font-bold text-3xl">
           <h2 className="text-center">Pure memories, free from distraction</h2>
         </div>
