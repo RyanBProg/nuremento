@@ -7,6 +7,20 @@
 }
 
 .landscape {
+  --v1: #ae7dbc;
+  --v2: #946155;
+  --v3: #4b261d;
+  --v4: #7b5749;
+  --s1: #fea798;
+  --s2: #fdb8ac;
+  --s3: #e99a61;
+  --cloud: #fff0e6;
+  --land-1: #91613c;
+  --land-2: #69482e;
+  --ocean: #367ea9;
+  --pad: #336746;
+  --transparent-pad: #5e30d900;
+
   flex-grow: 1;
   background-image: linear-gradient(var(--v1), var(--s1), var(--v1));
   position: relative;
@@ -103,7 +117,7 @@
   bottom: 0;
   background: radial-gradient(
     circle at 60% 100%,
-    var(--sun-2) 0%,
+    var(--s3) 0%,
     transparent 50%
   );
   animation: fade 20s infinite;
@@ -339,4 +353,114 @@
 }
 .delay-6 {
   animation-delay: 6s;
+}
+
+.washedBottle {
+  position: absolute;
+  bottom: 75px;
+  left: 35%;
+  width: 120px;
+  height: 190px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 9;
+  padding: 0;
+  transform: rotate(10deg);
+  animation: washUp 10s ease-in-out infinite;
+  /* filter: drop-shadow(0 14px 25px rgba(15, 23, 42, 0.28)); */
+}
+
+/* .washedBottleActive {
+  animation-play-state: paused;
+  transform: rotate(-4deg) scale(1.05);
+} */
+
+.bottleCork {
+  position: absolute;
+  width: 42%;
+  height: 16%;
+  top: 4%;
+  left: 29%;
+  border-radius: 35% 35% 25% 25%;
+  background: linear-gradient(180deg, #9b6c3b 0%, #6f4727 100%);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.bottleScroll {
+  position: absolute;
+  inset: 35% 27% 20% 27%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 222, 0.95) 0%,
+    rgba(247, 224, 186, 0.9) 100%
+  );
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(190, 116, 30, 0.25);
+}
+
+.bottleGlass {
+  position: absolute;
+  inset: 14% 20% 6% 20%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(148, 197, 235, 0.55) 65%,
+    rgba(71, 146, 180, 0.55) 100%
+  );
+  border: 2px solid rgba(47, 93, 120, 0.4);
+  border-radius: 50% 50% 20% 20%;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+
+.bottleGlass::after {
+  content: "";
+  position: absolute;
+  inset: 12% 18%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(220, 237, 255, 0.35) 0%,
+    rgba(102, 167, 207, 0.2) 65%,
+    rgba(66, 128, 167, 0.45) 100%
+  );
+  opacity: 0.8;
+}
+
+.bottleHighlight {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  width: 30%;
+  height: 60%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65), transparent);
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0.8;
+}
+
+.bottleShadow {
+  position: absolute;
+  bottom: 18%;
+  right: 12%;
+  width: 36%;
+  height: 36%;
+  background: radial-gradient(
+    circle at center,
+    rgba(30, 58, 86, 0.35),
+    transparent 70%
+  );
+}
+
+.dirt-mask {
+  position: absolute;
+  z-index: 10;
+  bottom: 70px;
+  left: 35.5%;
+  height: 25px;
+  width: 80px;
+  background-color: var(--land-1);
+  border-radius: 10% 50% 0 0;
+  border-top: 1px solid black;
 }

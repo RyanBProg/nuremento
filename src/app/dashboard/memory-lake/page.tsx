@@ -1,8 +1,8 @@
-import styles from "./OceanScene.module.css";
+import styles from "./LakeScene.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.landscape}>
+    <section className={styles.landscape}>
       {/* mountains */}
       <div className={`${styles.mountain} ${styles["mountain-1"]}`}></div>
       <div className={`${styles.mountain} ${styles["mountain-2"]}`}></div>
@@ -61,6 +61,22 @@ export default function Home() {
         <div className={styles["grass-3"]}></div>
         <div className={styles.reed}></div>
       </div>
-    </div>
+
+      {/* bottle */}
+
+      <button
+        type="button"
+        className={`${styles.washedBottle} ${styles.washedBottleActive}`}
+        aria-label="Open the washed-up bottle">
+        <div className={styles.bottleGlass}>
+          <div className={styles.bottleHighlight} />
+          <div className={styles.bottleShadow} />
+        </div>
+        <div className={styles.bottleCork} />
+        <div className={styles.bottleScroll} />
+      </button>
+
+      <div className={styles["dirt-mask"]}></div>
+    </section>
   );
 }
