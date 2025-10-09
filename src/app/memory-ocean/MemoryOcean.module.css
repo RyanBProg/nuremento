@@ -1,0 +1,438 @@
+.scene {
+  position: relative;
+  min-height: clamp(640px, 85vh, 880px);
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    #9dd6ff 0%,
+    #ccecff 40%,
+    #6eb7e3 65%,
+    #0d4d82 100%
+  );
+  border-bottom: 8px solid rgba(15, 23, 42, 0.3);
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 20% 15%,
+      rgba(255, 255, 255, 0.55),
+      transparent 45%
+    ),
+    linear-gradient(180deg, #86cdf9 0%, #c6e8ff 58%, rgba(134, 205, 249, 0.35) 100%);
+  z-index: 1;
+}
+
+.sun {
+  position: absolute;
+  top: 8%;
+  right: 14%;
+  width: clamp(110px, 14vw, 160px);
+  height: clamp(110px, 14vw, 160px);
+  background: radial-gradient(circle, #fff7b5 0%, #ffd86f 55%, #ffbb42 100%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 45px 0 rgba(255, 232, 135, 0.8),
+    0 0 120px 10px rgba(255, 227, 137, 0.6);
+  z-index: 2;
+  animation: sunGlow 8s ease-in-out infinite;
+}
+
+.cloud {
+  position: absolute;
+  top: 12%;
+  width: clamp(180px, 28vw, 320px);
+  height: clamp(75px, 12vw, 120px);
+  background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6));
+  border-radius: 50% 60% 50% 60%;
+  filter: blur(0.5px);
+  z-index: 3;
+  opacity: 0.8;
+  animation: cloudDrift 38s linear infinite;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: inherit;
+  opacity: 0.9;
+}
+
+.cloud::before {
+  width: 60%;
+  height: 75%;
+  top: -30%;
+  left: 15%;
+}
+
+.cloud::after {
+  width: 50%;
+  height: 70%;
+  top: 25%;
+  right: 5%;
+}
+
+.cloudOne {
+  left: -15%;
+  animation-duration: 45s;
+}
+
+.cloudTwo {
+  top: 20%;
+  left: 60%;
+  animation-duration: 55s;
+  animation-delay: 12s;
+}
+
+.cloudThree {
+  top: 28%;
+  left: 20%;
+  width: clamp(140px, 20vw, 240px);
+  animation-duration: 42s;
+  animation-delay: 22s;
+}
+
+.birds {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  width: 100%;
+  height: 160px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.bird {
+  position: absolute;
+  width: 32px;
+  height: 12px;
+  opacity: 0.85;
+  transform-origin: center;
+  animation: birdFlight 26s linear infinite;
+}
+
+.bird::before,
+.bird::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 14px;
+  border-top: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50% 50% 0 0;
+  top: 0;
+}
+
+.bird::before {
+  left: 0;
+  transform: rotate(12deg);
+}
+
+.bird::after {
+  right: 0;
+  transform: rotate(-12deg);
+}
+
+.birdOne {
+  top: 35px;
+  left: -10%;
+  animation-duration: 28s;
+  animation-delay: 3s;
+}
+
+.birdTwo {
+  top: 60px;
+  left: -25%;
+  animation-duration: 32s;
+  animation-delay: 12s;
+  transform: scale(0.85);
+}
+
+.birdThree {
+  top: 18px;
+  left: -15%;
+  animation-duration: 30s;
+  animation-delay: 6s;
+  transform: scale(0.7);
+}
+
+.ocean {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  height: 45%;
+  background: linear-gradient(180deg, #3ca6d5 0%, #1376b2 55%, #0b4f8e 100%);
+  overflow: hidden;
+  z-index: 5;
+  box-shadow: inset 0 25px 60px rgba(14, 113, 184, 0.3);
+}
+
+.wave {
+  position: absolute;
+  width: 220%;
+  height: 45%;
+  border-radius: 50%;
+  opacity: 0.45;
+  transform: translateX(-12%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.1) 70%
+  );
+  animation: waveMotion 14s linear infinite;
+}
+
+.waveBack {
+  bottom: 55%;
+  opacity: 0.3;
+  animation-duration: 24s;
+}
+
+.waveMid {
+  bottom: 30%;
+  animation-duration: 18s;
+  animation-delay: -6s;
+  opacity: 0.45;
+}
+
+.waveFront {
+  bottom: 12%;
+  opacity: 0.6;
+  animation-duration: 12s;
+  animation-delay: -3s;
+}
+
+.ship {
+  position: absolute;
+  bottom: 46%;
+  left: 62%;
+  width: clamp(120px, 18vw, 200px);
+  height: clamp(80px, 12vw, 120px);
+  z-index: 6;
+  pointer-events: none;
+  animation: bobbing 6.5s ease-in-out infinite;
+  filter: drop-shadow(0 18px 25px rgba(8, 47, 73, 0.35));
+}
+
+.beach {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30%;
+  background: linear-gradient(180deg, #f1d9a2 0%, #e9c579 40%, #d29a53 95%);
+  z-index: 4;
+}
+
+.beach::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.18) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(230, 182, 105, 0.3) 0%, transparent 60%);
+  background-size: 14px 14px, 180px 100%;
+  opacity: 0.4;
+}
+
+.messageBottle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(90px, 14vw, 130px);
+  height: clamp(160px, 24vw, 220px);
+  cursor: grab;
+  touch-action: none;
+  z-index: 10;
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.2s ease,
+    opacity 0.3s ease;
+  filter: drop-shadow(0 12px 18px rgba(14, 93, 126, 0.3));
+}
+
+.messageBottle:active {
+  cursor: grabbing;
+}
+
+.bottleDragging {
+  filter: drop-shadow(0 25px 40px rgba(15, 23, 42, 0.35));
+}
+
+.bottleSink {
+  animation: bottleSink 0.9s ease-in forwards;
+}
+
+.bottleGlass {
+  position: absolute;
+  inset: 14% 20% 6% 20%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(148, 197, 235, 0.55) 65%, rgba(71, 146, 180, 0.55) 100%);
+  border: 2px solid rgba(47, 93, 120, 0.4);
+  border-radius: 35% 35% 45% 45%;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+
+.bottleGlass::after {
+  content: "";
+  position: absolute;
+  inset: 12% 18%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(220, 237, 255, 0.35) 0%, rgba(102, 167, 207, 0.2) 65%, rgba(66, 128, 167, 0.45) 100%);
+  opacity: 0.8;
+}
+
+.bottleHighlight {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  width: 30%;
+  height: 60%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65), transparent);
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0.8;
+}
+
+.bottleShadow {
+  position: absolute;
+  bottom: 18%;
+  right: 12%;
+  width: 36%;
+  height: 36%;
+  background: radial-gradient(
+    circle at center,
+    rgba(30, 58, 86, 0.35),
+    transparent 70%
+  );
+}
+
+.bottleCork {
+  position: absolute;
+  width: 42%;
+  height: 16%;
+  top: 4%;
+  left: 29%;
+  border-radius: 35% 35% 25% 25%;
+  background: linear-gradient(180deg, #9b6c3b 0%, #6f4727 100%);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.bottleScroll {
+  position: absolute;
+  inset: 26% 27% 30% 27%;
+  background: linear-gradient(180deg, rgba(255, 245, 222, 0.95) 0%, rgba(247, 224, 186, 0.9) 100%);
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(190, 116, 30, 0.25);
+  transform: rotate(-6deg);
+}
+
+.washedBottle {
+  position: absolute;
+  bottom: 12%;
+  left: clamp(12%, 20vw, 26%);
+  width: clamp(80px, 12vw, 120px);
+  height: clamp(140px, 22vw, 190px);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 9;
+  padding: 0;
+  transform: rotate(-12deg);
+  animation: washUp 10s ease-in-out infinite;
+  filter: drop-shadow(0 14px 25px rgba(15, 23, 42, 0.28));
+}
+
+.washedBottleActive {
+  animation-play-state: paused;
+  transform: rotate(-4deg) scale(1.05);
+}
+
+@keyframes sunGlow {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 45px 0 rgba(255, 232, 135, 0.8),
+      0 0 120px 10px rgba(255, 227, 137, 0.6);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow:
+      0 0 55px 4px rgba(255, 232, 135, 0.85),
+      0 0 140px 12px rgba(255, 227, 137, 0.7);
+  }
+}
+
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(140%);
+  }
+}
+
+@keyframes birdFlight {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(120vw) translateY(12px) scale(1.05);
+  }
+  100% {
+    transform: translateX(240vw) translateY(-8px) scale(0.95);
+  }
+}
+
+@keyframes waveMotion {
+  0% {
+    transform: translateX(-12%) translateY(0);
+  }
+  50% {
+    transform: translateX(-4%) translateY(6px);
+  }
+  100% {
+    transform: translateX(-12%) translateY(0);
+  }
+}
+
+@keyframes bobbing {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-1deg);
+  }
+}
+
+@keyframes washUp {
+  0%,
+  100% {
+    transform: rotate(-12deg) translateY(0);
+  }
+  40% {
+    transform: rotate(-10deg) translateY(-6px);
+  }
+  70% {
+    transform: rotate(-14deg) translateY(4px);
+  }
+}
+
+@keyframes bottleSink {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(10px, 60px, 0) scale(0.7);
+  }
+}

@@ -30,6 +30,9 @@ export function SiteHeader() {
           <Link href="/#purpose" className="hidden md:inline button-plain">
             Purpose
           </Link>
+          <Link href="/memory-ocean" className="hidden md:inline button-plain">
+            Memory Ocean
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
