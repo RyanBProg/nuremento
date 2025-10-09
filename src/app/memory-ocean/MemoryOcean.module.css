@@ -21,7 +21,12 @@
       rgba(255, 255, 255, 0.55),
       transparent 45%
     ),
-    linear-gradient(180deg, #86cdf9 0%, #c6e8ff 58%, rgba(134, 205, 249, 0.35) 100%);
+    linear-gradient(
+      180deg,
+      #86cdf9 0%,
+      #c6e8ff 58%,
+      rgba(134, 205, 249, 0.35) 100%
+    );
   z-index: 1;
 }
 
@@ -33,8 +38,7 @@
   height: clamp(110px, 14vw, 160px);
   background: radial-gradient(circle, #fff7b5 0%, #ffd86f 55%, #ffbb42 100%);
   border-radius: 50%;
-  box-shadow:
-    0 0 45px 0 rgba(255, 232, 135, 0.8),
+  box-shadow: 0 0 45px 0 rgba(255, 232, 135, 0.8),
     0 0 120px 10px rgba(255, 227, 137, 0.6);
   z-index: 2;
   animation: sunGlow 8s ease-in-out infinite;
@@ -45,7 +49,11 @@
   top: 12%;
   width: clamp(180px, 28vw, 320px);
   height: clamp(75px, 12vw, 120px);
-  background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6));
+  background: radial-gradient(
+    circle at 30% 40%,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.6)
+  );
   border-radius: 50% 60% 50% 60%;
   filter: blur(0.5px);
   z-index: 3;
@@ -94,69 +102,6 @@
   width: clamp(140px, 20vw, 240px);
   animation-duration: 42s;
   animation-delay: 22s;
-}
-
-.birds {
-  position: absolute;
-  top: 10%;
-  left: 0;
-  width: 100%;
-  height: 160px;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.bird {
-  position: absolute;
-  width: 32px;
-  height: 12px;
-  opacity: 0.85;
-  transform-origin: center;
-  animation: birdFlight 26s linear infinite;
-}
-
-.bird::before,
-.bird::after {
-  content: "";
-  position: absolute;
-  width: 24px;
-  height: 14px;
-  border-top: 2px solid rgba(255, 255, 255, 0.9);
-  border-radius: 50% 50% 0 0;
-  top: 0;
-}
-
-.bird::before {
-  left: 0;
-  transform: rotate(12deg);
-}
-
-.bird::after {
-  right: 0;
-  transform: rotate(-12deg);
-}
-
-.birdOne {
-  top: 35px;
-  left: -10%;
-  animation-duration: 28s;
-  animation-delay: 3s;
-}
-
-.birdTwo {
-  top: 60px;
-  left: -25%;
-  animation-duration: 32s;
-  animation-delay: 12s;
-  transform: scale(0.85);
-}
-
-.birdThree {
-  top: 18px;
-  left: -15%;
-  animation-duration: 30s;
-  animation-delay: 6s;
-  transform: scale(0.7);
 }
 
 .ocean {
@@ -208,14 +153,19 @@
 
 .ship {
   position: absolute;
-  bottom: 46%;
-  left: 62%;
+  top: 20%;
+  left: 25%;
   width: clamp(120px, 18vw, 200px);
   height: clamp(80px, 12vw, 120px);
   z-index: 6;
   pointer-events: none;
   animation: bobbing 6.5s ease-in-out infinite;
   filter: drop-shadow(0 18px 25px rgba(8, 47, 73, 0.35));
+
+  & img {
+    height: 120px;
+    transform: skew(-5deg, -5deg);
+  }
 }
 
 .beach {
@@ -250,9 +200,7 @@
   cursor: grab;
   touch-action: none;
   z-index: 10;
-  transition:
-    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.2s ease,
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s ease,
     opacity 0.3s ease;
   filter: drop-shadow(0 12px 18px rgba(14, 93, 126, 0.3));
 }
@@ -272,7 +220,12 @@
 .bottleGlass {
   position: absolute;
   inset: 14% 20% 6% 20%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(148, 197, 235, 0.55) 65%, rgba(71, 146, 180, 0.55) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(148, 197, 235, 0.55) 65%,
+    rgba(71, 146, 180, 0.55) 100%
+  );
   border: 2px solid rgba(47, 93, 120, 0.4);
   border-radius: 35% 35% 45% 45%;
   overflow: hidden;
@@ -284,7 +237,12 @@
   position: absolute;
   inset: 12% 18%;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(220, 237, 255, 0.35) 0%, rgba(102, 167, 207, 0.2) 65%, rgba(66, 128, 167, 0.45) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(220, 237, 255, 0.35) 0%,
+    rgba(102, 167, 207, 0.2) 65%,
+    rgba(66, 128, 167, 0.45) 100%
+  );
   opacity: 0.8;
 }
 
@@ -327,7 +285,11 @@
 .bottleScroll {
   position: absolute;
   inset: 26% 27% 30% 27%;
-  background: linear-gradient(180deg, rgba(255, 245, 222, 0.95) 0%, rgba(247, 224, 186, 0.9) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 222, 0.95) 0%,
+    rgba(247, 224, 186, 0.9) 100%
+  );
   border-radius: 12px;
   box-shadow: inset 0 0 8px rgba(190, 116, 30, 0.25);
   transform: rotate(-6deg);
@@ -358,14 +320,12 @@
   0%,
   100% {
     transform: scale(1);
-    box-shadow:
-      0 0 45px 0 rgba(255, 232, 135, 0.8),
+    box-shadow: 0 0 45px 0 rgba(255, 232, 135, 0.8),
       0 0 120px 10px rgba(255, 227, 137, 0.6);
   }
   50% {
     transform: scale(1.04);
-    box-shadow:
-      0 0 55px 4px rgba(255, 232, 135, 0.85),
+    box-shadow: 0 0 55px 4px rgba(255, 232, 135, 0.85),
       0 0 140px 12px rgba(255, 227, 137, 0.7);
   }
 }
@@ -376,18 +336,6 @@
   }
   100% {
     transform: translateX(140%);
-  }
-}
-
-@keyframes birdFlight {
-  0% {
-    transform: translateX(0) translateY(0) scale(1);
-  }
-  50% {
-    transform: translateX(120vw) translateY(12px) scale(1.05);
-  }
-  100% {
-    transform: translateX(240vw) translateY(-8px) scale(0.95);
   }
 }
 

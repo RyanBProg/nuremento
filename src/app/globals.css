@@ -4,6 +4,24 @@
   color-scheme: light;
   --background: rgb(254, 250, 235);
   --foreground: #171717;
+
+  --v1: #ae7dbc;
+  --v2: #9e5846;
+  --v3: #4b261d;
+  --transparentv3: #5e30d900;
+  --v4: #7b5749;
+  --s1: #fea798;
+  --s2: #ff846e;
+  --cloud: #fff0e6;
+
+  --land-1: #91613c;
+  --land-2: #69482e;
+
+  --sun-2: #e99a61;
+
+  --ocean: #8fa7e2;
+  --pad: #336746;
+  --transparent-pad: #5e30d900;
 }
 
 /* @media (prefers-color-scheme: dark) {

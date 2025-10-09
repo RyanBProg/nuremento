@@ -1,0 +1,342 @@
+.landscape:after,
+.landscape:before,
+.landscape *,
+.landscape *:after,
+.landscape *:before {
+  position: absolute;
+}
+
+.landscape {
+  flex-grow: 1;
+  background-image: linear-gradient(var(--v1), var(--s1), var(--v1));
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.mountain {
+  bottom: 50%;
+  background: var(--s1);
+
+  &:before {
+    content: "";
+    bottom: 0;
+    width: inherit;
+    height: inherit;
+    background: inherit;
+    border-radius: inherit;
+    transform-origin: bottom center;
+    transform: scaleX(1) scaleY(-0.6);
+    filter: blur(3px);
+  }
+}
+
+.mountain-1 {
+  left: -10px;
+  width: 42vmin;
+  height: 32vmin;
+  border-radius: 180% 80% 0% 0%/60vmin 60vmin 0% 0%;
+  box-shadow: inset -10px 0 10px -10px var(--s1);
+  background-image: linear-gradient(var(--s1), var(--v2) 30%, var(--v3));
+}
+
+.mountain-2 {
+  left: -50px;
+  height: 15vmin;
+  width: 45vmin;
+  border-radius: 120% 50% 0% 0%/25vmin 25vmin 0% 0%;
+  box-shadow: inset -15px 0 10px -14px var(--s1);
+  background-image: linear-gradient(var(--v3), var(--v4));
+}
+
+.mountain-3 {
+  right: -85vmin;
+  width: 100vmin;
+  height: 12vmin;
+  color: var(--v3);
+  border-radius: 80% 0% 0 0/100% 100% 0 0;
+  background-image: linear-gradient(var(--s1), var(--v4));
+  box-shadow: inset 15px 0 10px -10px var(--s1);
+
+  &:after {
+    content: "";
+    border-radius: 60% 0 0 0/100% 0 0 0;
+    background: inherit;
+    width: 100%;
+    height: 0;
+    bottom: 0;
+    right: 20%;
+  }
+
+  @media (max-width: 40rem /* 640px */) {
+    display: none;
+  }
+}
+
+.sun {
+  background: white;
+  border-radius: 50%;
+  width: 30vmin;
+  height: 30vmin;
+  min-height: 120px;
+  min-width: 120px;
+  left: calc(60% - 10vmin);
+  bottom: -5%;
+  box-shadow: 0 0 10px white;
+
+  @media (max-width: 40rem /* 640px */) {
+    left: calc(70% - 10vmin);
+  }
+}
+
+.sun-container {
+  overflow: hidden;
+  width: 100%;
+  height: 50%;
+}
+
+.sun-container-1:after {
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 60% 100%,
+    var(--sun-2) 0%,
+    transparent 50%
+  );
+  animation: fade 20s infinite;
+}
+
+@keyframes fade {
+  10% {
+    opacity: 1;
+  }
+  30%,
+  70% {
+    opacity: 0;
+  }
+}
+
+.sun-container-reflection {
+  top: 50%;
+  background: radial-gradient(circle at 60% 0%, var(--s2), transparent);
+}
+
+.sun-container-reflection .sun {
+  background: linear-gradient(white, rgba(255, 255, 255, 0));
+  box-shadow: none;
+  filter: blur(5px);
+  opacity: 1;
+  top: -5%;
+}
+
+.cloud {
+  width: 50vmin;
+  height: 8vmin;
+  background: currentcolor;
+  color: var(--cloud);
+  top: 30%;
+  left: 70vmin;
+  border-radius: 50%;
+  box-shadow: 25vmin 0.5vmin 0 -1vmin currentcolor,
+    -25vmin 0 0 -0.6vmin currentcolor;
+  opacity: 0.6;
+
+  @media (max-width: 40rem /* 640px */) {
+    top: 42%;
+  }
+}
+
+.cloud-1 {
+  left: auto;
+  right: 20vmin;
+  top: 15%;
+  opacity: 0.15;
+  filter: blur(1px);
+  animation-delay: 0;
+  animation-duration: 100s;
+
+  @media (max-width: 40rem /* 640px */) {
+    top: 32%;
+  }
+}
+
+.water {
+  top: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(#fea79855, var(--ocean));
+  overflow: hidden;
+  box-shadow: inset 0 1px 4px -3px white;
+}
+
+.land-container {
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.land {
+  bottom: 0;
+  right: 0;
+  height: 130px;
+  width: 100%;
+  background: var(--land-1);
+  box-shadow: inset 0 0 20px -5px rgba(0, 0, 0, 0.2);
+  border-radius: 0% 200% 0 0/0% 200%;
+
+  &:after {
+    content: "";
+    background: var(--land-2);
+    width: 100%;
+    height: 110%;
+    top: -10%;
+    left: 0;
+    border-radius: inherit;
+    z-index: -1;
+    transform: scaleX(1.3) skew(20deg);
+    box-shadow: inset 0 0 20px -5px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.grass {
+  height: 240px;
+  width: 100px;
+  left: -10px;
+  bottom: 0;
+  border-radius: 0 60% 0 0/0 100% 0 0;
+  border-right: 5px solid var(--v4);
+  box-shadow: 1px 0 0 var(--s1);
+  filter: drop-shadow(-5px 50px 0 var(--s2)) drop-shadow(-40px 80px 0 var(--v3));
+}
+
+.grass-2 {
+  height: 140px;
+  width: 140px;
+  border-radius: 0 60% 0 0/0 100% 0 0;
+  bottom: 170px;
+  right: 90px;
+  border-right: 5px solid var(--v4);
+  box-shadow: 1px 0 0 var(--s1);
+}
+
+.grass-3 {
+  height: 75px;
+  width: 140px;
+  border-radius: 0 60% 0 0/0 100% 0 0;
+  bottom: 170px;
+  right: 90px;
+  border-right: 5px solid var(--v4);
+  box-shadow: 1px 0 0 var(--s1);
+}
+
+.reed {
+  height: 200px;
+  width: 4px;
+  bottom: 180px;
+  right: 90px;
+  color: var(--v4);
+  background: currentColor;
+  transform-origin: bottom center;
+  transform: rotate(2deg);
+
+  &:after {
+    content: "";
+    width: 14px;
+    height: 45px;
+    background: currentcolor;
+    border-radius: 40px;
+    top: 0;
+    left: -5px;
+    box-shadow: inherit;
+  }
+}
+
+.lotus {
+  width: 90px;
+  height: 30px;
+  background: conic-gradient(
+    var(--pad) 0deg 40deg,
+    var(--transparent-pad) 50deg 70deg,
+    var(--pad) 80deg
+  );
+  border-radius: 50%;
+}
+
+.lotus-1 {
+  bottom: 130px;
+  right: -40px;
+  width: 130px;
+}
+
+.lotus-2 {
+  bottom: 190px;
+  right: 15px;
+  height: 25px;
+  transform: skew(-10deg);
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+
+.lotus-3 {
+  bottom: 150px;
+  right: 110px;
+  transform: rotate(180deg) skew(-20deg);
+  opacity: 0.8;
+  width: 90px;
+}
+
+.splash {
+  width: 8vmin;
+  height: 3vmin;
+  border: 2px solid var(--s1);
+  box-shadow: 0 0 2px var(--s1);
+  border-radius: 50%;
+  bottom: 300px;
+  left: 200px;
+  animation: splash 9s infinite;
+  transform: scale(0);
+}
+
+.splash-stone {
+  bottom: 150px;
+  left: -40px;
+  height: 10vmin;
+  width: 30vmin;
+}
+
+.splash-2 {
+  bottom: 160px;
+  left: auto;
+  right: -10px;
+}
+
+@keyframes splash {
+  50%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+.delay-1 {
+  animation-delay: 1s;
+}
+.delay-2 {
+  animation-delay: 2s;
+}
+.delay-3 {
+  animation-delay: 3s;
+}
+.delay-4 {
+  animation-delay: 4s;
+}
+.delay-5 {
+  animation-delay: 5s;
+}
+.delay-6 {
+  animation-delay: 6s;
+}

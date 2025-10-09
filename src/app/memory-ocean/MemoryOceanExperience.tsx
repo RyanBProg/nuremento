@@ -13,8 +13,7 @@ type BottleState = "idle" | "ready" | "dragging" | "throwing";
 
 const createMemory = (text: string): OceanMemory => ({
   id: `memory-${
-    globalThis.crypto?.randomUUID?.() ??
-    Math.random().toString(36).slice(2, 10)
+    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2, 10)
   }`,
   text,
   createdAt: new Date().toISOString(),
@@ -168,7 +167,12 @@ export function MemoryOceanExperience() {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
     };
-  }, [bottleState, bottleSize.height, bottleSize.width, initializeBottlePosition]);
+  }, [
+    bottleState,
+    bottleSize.height,
+    bottleSize.width,
+    initializeBottlePosition,
+  ]);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (
     event
@@ -213,7 +217,9 @@ export function MemoryOceanExperience() {
   };
 
   const isBottleVisible =
-    bottleState === "ready" || bottleState === "dragging" || bottleState === "throwing";
+    bottleState === "ready" ||
+    bottleState === "dragging" ||
+    bottleState === "throwing";
 
   const hintLabel =
     bottleState === "idle"
@@ -229,19 +235,21 @@ export function MemoryOceanExperience() {
       <section
         ref={sceneRef}
         className={styles.scene}
-        aria-label="Coastal vignette"
-      >
+        aria-label="Coastal vignette">
         <div className={styles.sky} />
         <div className={styles.sun} aria-hidden="true" />
-        <div className={`${styles.cloud} ${styles.cloudOne}`} aria-hidden="true" />
-        <div className={`${styles.cloud} ${styles.cloudTwo}`} aria-hidden="true" />
-        <div className={`${styles.cloud} ${styles.cloudThree}`} aria-hidden="true" />
-
-        <div className={styles.birds} aria-hidden="true">
-          <span className={`${styles.bird} ${styles.birdOne}`} />
-          <span className={`${styles.bird} ${styles.birdTwo}`} />
-          <span className={`${styles.bird} ${styles.birdThree}`} />
-        </div>
+        <div
+          className={`${styles.cloud} ${styles.cloudOne}`}
+          aria-hidden="true"
+        />
+        <div
+          className={`${styles.cloud} ${styles.cloudTwo}`}
+          aria-hidden="true"
+        />
+        <div
+          className={`${styles.cloud} ${styles.cloudThree}`}
+          aria-hidden="true"
+        />
 
         <div ref={oceanRef} className={styles.ocean} aria-hidden="true">
           <div className={`${styles.wave} ${styles.waveBack}`} />
@@ -250,7 +258,8 @@ export function MemoryOceanExperience() {
         </div>
 
         <div className={styles.ship} aria-hidden="true">
-          <svg
+          <img src="/images/ship.png" alt="" />
+          {/* <svg
             viewBox="0 0 160 90"
             xmlns="http://www.w3.org/2000/svg"
             className="h-full w-full"
@@ -293,7 +302,7 @@ export function MemoryOceanExperience() {
             <circle cx="60" cy="72" r="3" fill="#fff" opacity="0.6" />
             <circle cx="85" cy="72" r="3" fill="#fff" opacity="0.6" />
             <circle cx="110" cy="72" r="3" fill="#fff" opacity="0.6" />
-          </svg>
+          </svg> */}
         </div>
 
         <div className={styles.beach} aria-hidden="true" />
@@ -308,8 +317,7 @@ export function MemoryOceanExperience() {
             style={{
               transform: `translate3d(${bottlePosition.x}px, ${bottlePosition.y}px, 0)`,
             }}
-            onPointerDown={handlePointerDown}
-          >
+            onPointerDown={handlePointerDown}>
             <div className={styles.bottleGlass}>
               <div className={styles.bottleHighlight} />
               <div className={styles.bottleShadow} />
@@ -326,8 +334,7 @@ export function MemoryOceanExperience() {
               dailyOpen ? styles.washedBottleActive : ""
             }`}
             onClick={() => setDailyOpen(true)}
-            aria-label="Open the washed-up bottle"
-          >
+            aria-label="Open the washed-up bottle">
             <div className={styles.bottleGlass}>
               <div className={styles.bottleHighlight} />
               <div className={styles.bottleShadow} />
@@ -359,8 +366,7 @@ export function MemoryOceanExperience() {
             onSubmit={(event) => {
               event.preventDefault();
               handlePrepareBottle();
-            }}
-          >
+            }}>
             <label htmlFor="memory" className="font-medium text-slate-900">
               Your memory
             </label>
@@ -376,16 +382,16 @@ export function MemoryOceanExperience() {
             <p className="text-sm text-slate-600">{hintLabel}</p>
             <p
               className="min-h-[1.5rem] text-sm font-medium text-slate-900"
-              aria-live="polite"
-            >
+              aria-live="polite">
               {statusMessage}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="submit"
                 className="button-filled"
-                disabled={bottleState === "dragging" || bottleState === "throwing"}
-              >
+                disabled={
+                  bottleState === "dragging" || bottleState === "throwing"
+                }>
                 Seal bottle
               </button>
               {bottleState === "ready" && (
@@ -438,8 +444,7 @@ export function MemoryOceanExperience() {
           className="fixed inset-0 z-[60] flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
-          aria-label="Washed up memory"
-        >
+          aria-label="Washed up memory">
           <button
             type="button"
             className="absolute inset-0 h-full w-full bg-slate-900/50 backdrop-blur-sm"
@@ -454,7 +459,8 @@ export function MemoryOceanExperience() {
               {dailyBottle.text}
             </p>
             <p className="mt-4 text-xs uppercase tracking-wider text-slate-400">
-              Returned {new Intl.DateTimeFormat(undefined, {
+              Returned{" "}
+              {new Intl.DateTimeFormat(undefined, {
                 weekday: "long",
                 month: "short",
                 day: "numeric",
@@ -464,8 +470,7 @@ export function MemoryOceanExperience() {
               <button
                 type="button"
                 className="button-border"
-                onClick={() => setDailyOpen(false)}
-              >
+                onClick={() => setDailyOpen(false)}>
                 Close
               </button>
             </div>
