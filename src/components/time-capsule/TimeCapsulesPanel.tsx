@@ -30,7 +30,10 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
           </div>
           <TimeCapsuleCreateModal
             trigger={({ open }) => (
-              <button type="button" onClick={open} className="button-filled">
+              <button
+                type="button"
+                onClick={open}
+                className="button button-filled">
                 Create capsule
               </button>
             )}

@@ -18,7 +18,9 @@ export function TimeCapsuleShowcase() {
   const [isReady, setIsReady] = useState(false);
 
   return (
-    <section className="border-b bg-white py-20 md:py-38 px-4 xs:px-8">
+    <section
+      id="features"
+      className="border-b bg-white py-20 md:py-38 px-4 xs:px-8">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 rounded-xl border bg-background p-6 shadow-[5px_5px_0_rgba(0,0,0,1)]">
         <div className="flex flex-col gap-3 text-center">
           <span className="inline-flex items-center justify-center gap-2 self-center text-xs font-semibold uppercase tracking-[0.3em] text-neutral-600">

@@ -16,7 +16,7 @@ export function SiteHeader() {
         <nav className="flex gap-2 items-center text-sm" aria-label="Primary">
           <Link
             href="/"
-            className="mr-2 flex items-center gap-2 font-semibold tracking-tight rounded-full px-4 py-1 transition hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2">
+            className="mr-2 flex items-center gap-2 button button-plain tracking-tight px-4 py-1">
             <span className="text-xl sm:text-sm md:text-base font-bold">
               Nm
             </span>
@@ -24,38 +24,49 @@ export function SiteHeader() {
               Nuremento
             </span>
           </Link>
-          <Link href="/#features" className="hidden md:inline button-plain">
-            Features
-          </Link>
-          <Link href="/#purpose" className="hidden md:inline button-plain">
-            Purpose
-          </Link>
-          <Link href="/memory-ocean" className="hidden md:inline button-plain">
-            Memory Ocean
-          </Link>
-          <Link
-            href="/dashboard/memory-lake"
-            className="hidden md:inline button-plain">
-            Memory Lake
-          </Link>
+
+          <SignedIn>
+            <Link
+              href="/dashboard/memories"
+              className="hidden md:inline button button-plain">
+              Memories
+            </Link>
+            <Link
+              href="/dashboard/memory-lake"
+              className="hidden md:inline button button-plain">
+              Memory Lake
+            </Link>
+          </SignedIn>
+          <SignedOut>
+            <Link
+              href="/#features"
+              className="hidden md:inline button button-plain">
+              Features
+            </Link>
+            <Link
+              href="/#purpose"
+              className="hidden md:inline button button-plain">
+              Purpose
+            </Link>
+          </SignedOut>
         </nav>
 
         <div className="flex items-center gap-3">
           <SignedOut>
             <SignInButton mode="modal">
-              <button type="button" className="button-filled">
+              <button type="button" className="button button-filled">
                 Sign in
               </button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <button type="button" className="button-border">
+              <button type="button" className="button button-border">
                 Create account
               </button>
             </SignUpButton>
           </SignedOut>
 
           <SignedIn>
-            <Link href="/dashboard" className="button-border mr-4">
+            <Link href="/dashboard" className="button button-border mr-4">
               Dashboard
             </Link>
             <UserButton />

@@ -76,7 +76,7 @@ export default function TimeCapsule({
               type="button"
               onClick={open}
               disabled={!resolvedReady}
-              className="button-border">
+              className="button button-border">
               Open
             </button>
           )}

@@ -203,14 +203,14 @@ export function TimeCapsuleCreateModal({
               <div className="flex justify-end gap-3">
                 <button
                   type="submit"
-                  className="button-filled"
+                  className="button button-filled"
                   disabled={isSubmitting}>
                   {isSubmitting ? "Saving..." : "Save capsule"}
                 </button>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="button-border"
+                  className="button button-border"
                   disabled={isSubmitting}>
                   Cancel
                 </button>

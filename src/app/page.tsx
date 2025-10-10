@@ -70,10 +70,10 @@ export default async function Home() {
               revisit them through mindful, unique experiences.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link className="button-border" href={primaryCta.href}>
+              <Link className="button button-border" href={primaryCta.href}>
                 {primaryCta.label}
               </Link>
-              <Link className="button-filled" href={secondaryCta.href}>
+              <Link className="button button-filled" href={secondaryCta.href}>
                 {secondaryCta.label}
               </Link>
             </div>
@@ -83,7 +83,7 @@ export default async function Home() {
 
       <TimeCapsuleShowcase />
 
-      <section id="ai" className="border-b pt-12 pb-64 lg:py-20 overflow-clip">
+      <section className="border-b pt-12 pb-64 lg:py-20 overflow-clip">
         <div className="mx-auto max-w-6xl relative px-4 xs:px-8">
           <div>
             <h2 className="text-center lg:text-right font-bold text-3xl">
@@ -104,41 +104,23 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="features" className="bg-white border-b">
-        <div className="py-20 lg:py-44 mx-auto max-w-6xl border-x">
-          <div className="border-t px-4 xs:px-8 text-center py-10">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Different ways of interacting
-            </h2>
-            <p className="mt-4 text-base leading-relaxed sm:text-lg">
-              It&apos;s one thing to remember, but another to interact. Here,
-              you can interact with your past like never before — with calm,
-              curiosity, and creativity.
+      <section className="relative border-b">
+        <img src="/images/memory-lake-banner.png" alt="" />
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-xs flex items-center justify-center">
+          <div className="card h-fit w-fit max-w-lg flex flex-col p-8">
+            <h3 className="font-semibold text-xl">Memory Lake</h3>
+            <p className="mb-5 italic ">Cast your memories into the waves</p>
+            <p className="mb-10">
+              Each day you return, the lake sends one back - a message from your
+              past, floating gently to shore.
             </p>
-          </div>
-          <div className="border-y grid md:grid-cols-1 lg:grid-cols-3">
-            {features.map((feature) => (
-              <article
-                key={feature.title}
-                className="max-w-lg flex flex-col p-8 justify-self-center border-x border-b last:border-b-0 lg:border-0">
-                <div className="flex justify-center items-center">
-                  <Image
-                    src={feature.img}
-                    alt={feature.imgAlt}
-                    height={300}
-                    width={150}
-                  />
-                </div>
-                <h3 className="font-semibold text-xl">{feature.title}</h3>
-                <p className="mb-5 italic ">{feature.tag}</p>
-                <p className="mb-10">{feature.description}</p>
-                <div className="flex-1 flex items-end">
-                  <Link className="button-border" href={feature.link}>
-                    {feature.linkText}
-                  </Link>
-                </div>
-              </article>
-            ))}
+            <div className="flex-1 flex items-end">
+              <Link
+                className="button button-border"
+                href="dashboard/memory-lake">
+                Visit memory lake
+              </Link>
+            </div>
           </div>
         </div>
       </section>

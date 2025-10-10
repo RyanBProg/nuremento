@@ -241,7 +241,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                 <select
                   value={selectedYear}
                   onChange={handleYearChange}
-                  className="button-border">
+                  className="button button-border">
                   <option value="all">All years</option>
                   {availableYears.map((year) => (
                     <option key={year} value={year}>
@@ -256,7 +256,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                 <select
                   value={sortOrder}
                   onChange={handleSortChange}
-                  className="button-border">
+                  className="button button-border">
                   <option value="desc">Newest to oldest</option>
                   <option value="asc">Oldest to newest</option>
                 </select>
@@ -305,14 +305,14 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                               <button
                                 type="button"
                                 onClick={open}
-                                className="flex-1 button-filled">
+                                className="flex-1 button button-filled">
                                 Edit
                               </button>
                             )}
                           />
                           <button
                             type="button"
-                            className="flex-1 button-border disabled:cursor-not-allowed disabled:opacity-70"
+                            className="flex-1 button button-border disabled:cursor-not-allowed disabled:opacity-70"
                             onClick={() => handleDelete(memory)}
                             disabled={isDeleting}>
                             {isDeleting ? "Deleting…" : "Delete"}
@@ -333,14 +333,14 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                     type="button"
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
-                    className="button-border">
+                    className="button button-border">
                     Previous
                   </button>
                   <button
                     type="button"
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className="button-border">
+                    className="button button-border">
                     Next
                   </button>
                 </div>

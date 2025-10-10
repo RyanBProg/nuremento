@@ -452,7 +452,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   type="submit"
-                  className="button-filled"
+                  className="button button-filled"
                   disabled={isSubmitting}>
                   {isSubmitting
                     ? "Saving…"
@@ -463,7 +463,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="button-border"
+                  className="button button-border"
                   disabled={isSubmitting}>
                   Cancel
                 </button>

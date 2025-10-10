@@ -25,14 +25,22 @@ body {
   color: var(--foreground);
 }
 
-.button-filled {
-  @apply w-fit rounded-full border border-black bg-black text-white px-4 py-2 text-sm font-semibold transition ring-black ring-offset-1 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60;
-}
-
-.button-border {
-  @apply w-fit rounded-full border px-4 py-2 text-sm font-semibold transition hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60;
+.button {
+  @apply w-fit px-4 py-2 rounded-full text-sm font-semibold transition ease-in-out hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[.95];
 }
 
 .button-plain {
-  @apply w-fit rounded-full px-4 py-2 text-sm font-semibold transition hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply hover:outline-none hover:ring-2;
+}
+
+.button-filled {
+  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(50,50,50,0.7)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+}
+
+.button-border {
+  @apply border border-black hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+}
+
+.card {
+  @apply rounded-xl border bg-background p-6 shadow-[5px_5px_0_rgba(0,0,0,1)];
 }

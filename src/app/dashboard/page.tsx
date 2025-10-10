@@ -32,7 +32,9 @@ export default async function Home() {
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <CreateMemoryButton />
-                <Link href="/dashboard/memories" className="button-border">
+                <Link
+                  href="/dashboard/memories"
+                  className="button button-border">
                   View your memories
                 </Link>
               </div>

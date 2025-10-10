@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/db/client";
 import { memories } from "@/db/schema";
-import { MemoriesList } from "./MemoriesList";
+import { MemoriesList } from "@/components/memories/MemoriesList";
 import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";

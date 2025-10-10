@@ -84,7 +84,9 @@ export async function RecentMemoriesSection({
               Catch up on the latest moments you&apos;ve captured.
             </p>
           </div>
-          <Link href="/dashboard/memories" className="button-border w-fit">
+          <Link
+            href="/dashboard/memories"
+            className="button button-border w-fit">
             View all memories
           </Link>
         </div>
