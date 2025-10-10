@@ -1,13 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ReactNode,
-  type FormEvent,
-} from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 type TimeCapsuleForm = {
   title: string;
@@ -21,10 +15,6 @@ const initialForm: TimeCapsuleForm = {
   openOn: "",
 };
 
-type TimeCapsuleCreateModalProps = {
-  trigger: (props: { open: () => void }) => ReactNode;
-};
-
 function resolveMinDate() {
   const now = new Date();
   const year = now.getFullYear();
@@ -33,32 +23,16 @@ function resolveMinDate() {
   return `${year}-${month}-${day}`;
 }
 
-export function TimeCapsuleCreateModal({
-  trigger,
-}: TimeCapsuleCreateModalProps) {
-  const router = useRouter();
-
+export function TimeCapsuleCreateModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [formValues, setFormValues] = useState<TimeCapsuleForm>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const openButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const minDate = resolveMinDate();
-
-  useEffect(() => {
-    if (!isOpen) {
-      setFormValues(initialForm);
-      setError(null);
-    }
-  }, [isOpen]);
-
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
 
   function handleFieldChange<Key extends keyof TimeCapsuleForm>(
     key: Key,
@@ -66,6 +40,23 @@ export function TimeCapsuleCreateModal({
   ) {
     setFormValues((prev) => ({ ...prev, [key]: value }));
   }
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) =>
+      e.key === "Escape" && setIsOpen(false);
+
+    if (isOpen) {
+      dialogRef.current?.showModal();
+      document.addEventListener("keydown", onKeyDown);
+    } else {
+      setFormValues(initialForm);
+      setError(null);
+      dialogRef.current?.close();
+      openButtonRef.current?.focus();
+    }
+
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -89,11 +80,14 @@ export function TimeCapsuleCreateModal({
       return;
     }
 
+    console.log(openOnRaw);
+
     const openOnDate = new Date(`${openOnRaw}T00:00:00`);
     if (Number.isNaN(openOnDate.getTime())) {
       setError("Please choose a valid date.");
       return;
     }
+    console.log(openOnDate);
 
     setIsSubmitting(true);
     setError(null);
@@ -112,13 +106,10 @@ export function TimeCapsuleCreateModal({
       });
 
       if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as {
-          error?: unknown;
-        } | null;
-        const messageText =
-          typeof payload?.error === "string"
-            ? payload.error
-            : "We could not save this time capsule. Please try again.";
+        const payload = await response.json();
+        const messageText = payload?.error
+          ? payload?.error
+          : "We could not save this time capsule. Please try again.";
         setError(messageText);
         return;
       }
@@ -136,88 +127,95 @@ export function TimeCapsuleCreateModal({
 
   return (
     <>
-      {trigger({ open: openModal })}
+      <button
+        ref={openButtonRef}
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="button button-filled">
+        Create capsule
+      </button>
       {isOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-          <div className="overflow-y-scroll max-h-full relative w-full max-w-xl rounded-2xl bg-white p-6">
-            <button
-              type="button"
-              onClick={closeModal}
-              className="absolute right-4 top-4 text-sm text-neutral-600 transition hover:text-black"
-              aria-label="Close">
-              ✕
-            </button>
+        <dialog
+          ref={dialogRef}
+          onClick={(e) => {
+            const dialog = dialogRef.current;
+            if (dialog && e.target === dialog) {
+              setIsOpen(false);
+            }
+          }}
+          aria-labelledby="dialog-title"
+          aria-describedby="dialog-description"
+          className="m-auto overflow-y-scroll max-h-full w-full max-w-xl rounded-2xl bg-white p-6 backdrop:bg-black/50">
+          <h2 className="text-xl font-semibold" id="dialog-title">
+            Create a time capsule
+          </h2>
+          <p className="mt-1 text-sm text-neutral-600" id="dialog-description">
+            Leave a note for your future self and decide when it unlocks.
+          </p>
 
-            <h2 className="text-xl font-semibold">Create a time capsule</h2>
-            <p className="mt-1 text-sm text-neutral-600">
-              Leave a note for your future self and decide when it unlocks.
-            </p>
+          <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Title</span>
+              <input
+                // ref={inputRef}
+                type="text"
+                value={formValues.title}
+                onChange={(event) =>
+                  handleFieldChange("title", event.target.value)
+                }
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
+                placeholder="Dear future me..."
+                required
+              />
+            </label>
 
-            <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
-              <label className="space-y-2 text-sm font-medium">
-                <span className="block">Title</span>
-                <input
-                  type="text"
-                  value={formValues.title}
-                  onChange={(event) =>
-                    handleFieldChange("title", event.target.value)
-                  }
-                  className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
-                  placeholder="Dear future me..."
-                  required
-                />
-              </label>
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Message</span>
+              <textarea
+                rows={5}
+                value={formValues.message}
+                onChange={(event) =>
+                  handleFieldChange("message", event.target.value)
+                }
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
+                placeholder="What will you want to remember or celebrate?"
+                required
+              />
+            </label>
 
-              <label className="space-y-2 text-sm font-medium">
-                <span className="block">Message</span>
-                <textarea
-                  rows={5}
-                  value={formValues.message}
-                  onChange={(event) =>
-                    handleFieldChange("message", event.target.value)
-                  }
-                  className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
-                  placeholder="What will you want to remember or celebrate?"
-                  required
-                />
-              </label>
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Opens on</span>
+              <input
+                type="date"
+                min={minDate}
+                value={formValues.openOn}
+                onChange={(event) =>
+                  handleFieldChange("openOn", event.target.value)
+                }
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
+                required
+              />
+            </label>
 
-              <label className="space-y-2 text-sm font-medium">
-                <span className="block">Opens on</span>
-                <input
-                  type="date"
-                  min={minDate}
-                  value={formValues.openOn}
-                  onChange={(event) =>
-                    handleFieldChange("openOn", event.target.value)
-                  }
-                  className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
-                  required
-                />
-              </label>
+            {error ? <div className="text-sm text-red-500">{error}</div> : null}
 
-              {error ? (
-                <div className="text-sm text-red-500">{error}</div>
-              ) : null}
-
-              <div className="flex justify-end gap-3">
-                <button
-                  type="submit"
-                  className="button button-filled"
-                  disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save capsule"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="button button-border"
-                  disabled={isSubmitting}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            <div className="flex justify-end gap-3">
+              <button
+                type="submit"
+                className="button button-filled"
+                disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save capsule"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="button button-border"
+                disabled={isSubmitting}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </dialog>
       ) : null}
     </>
   );
