@@ -25,6 +25,21 @@
   --color-secondary-light: #d1eaee;
 }
 
+*,
+*::after,
+*::before {
+  font-family: var(--font-roboto);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-montserrat);
+}
+
 body {
   @apply min-h-screen overflow-x-hidden antialiased;
   background-color: var(--background);
