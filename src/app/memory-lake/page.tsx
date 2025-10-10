@@ -1,8 +1,10 @@
 "use client";
 
-import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Pause, Play, Plus, Volume2, VolumeX } from "lucide-react";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./LakeScene.module.css";
+import MessageModal from "@/components/MessageModal";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 type OceanMemory = {
   id: string;
@@ -178,6 +180,19 @@ export default function Home() {
             />
           </label>
         </div>
+
+        <SignedIn>
+          <button className="z-20 absolute top-24 right-5 button-lg button-filled flex items-center gap-3">
+            <Plus /> New message
+          </button>
+        </SignedIn>
+
+        <SignedOut>
+          <p className="p-4 rounded bg-white/40">
+            <div>Sign in to add meesages to your lake</div>
+          </p>
+        </SignedOut>
+
         {/* mountains */}
         <div className={`${styles.mountain} ${styles["mountain-1"]}`}></div>
         <div className={`${styles.mountain} ${styles["mountain-2"]}`}></div>
@@ -243,42 +258,25 @@ export default function Home() {
       </section>
       {/* bottle message modal */}
       {dailyBottle && dailyOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Washed up memory">
-          <button
-            type="button"
-            className="absolute inset-0 h-full w-full bg-slate-900/50 backdrop-blur-sm"
-            onClick={() => setDailyOpen(false)}
-            aria-label="Close memory overlay"
-          />
-          <div className="relative z-10 max-w-lg rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-2xl">
-            <h3 className="relative text-lg font-semibold text-slate-900">
-              Tide-carried memory
-            </h3>
-            <p className="relative mt-3 whitespace-pre-line text-pretty text-slate-700">
-              {dailyBottle.text}
-            </p>
-            <p className="relative mt-4 text-xs uppercase tracking-wider text-slate-400">
-              Returned{" "}
-              {new Intl.DateTimeFormat(undefined, {
-                weekday: "long",
-                month: "short",
-                day: "numeric",
-              }).format(new Date(dailyBottle.createdAt))}
-            </p>
-            <div className="relative mt-6 flex justify-end">
-              <button
-                type="button"
-                className="relative button button-border"
-                onClick={() => setDailyOpen(false)}>
-                Close
-              </button>
-            </div>
+        <MessageModal>
+          <h3 className="relative text-lg font-semibold text-slate-900">
+            Tide-carried memory
+          </h3>
+          <p className="relative mt-3 whitespace-pre-line text-pretty text-slate-700">
+            {dailyBottle.text}
+          </p>
+          <p className="relative mt-4 text-xs uppercase tracking-wider text-slate-400">
+            Bottled 04/04/2025
+          </p>
+          <div className="relative mt-6 flex justify-end">
+            <button
+              type="button"
+              className="relative button button-border"
+              onClick={() => setDailyOpen(false)}>
+              Delete
+            </button>
           </div>
-        </div>
+        </MessageModal>
       )}
     </>
   );

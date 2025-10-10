@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import MessageModal from "../MessageModal";
 
 type LoaderResult = {
   message: string;
@@ -192,47 +193,35 @@ export function TimeCapsuleOpenModal({
       {trigger({ open: handleOpen, disabled: !isUnlocked })}
 
       {isOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-          <div className="relative max-h-full w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6">
+        <MessageModal>
+          <h2 className="text-xl font-semibold">{title}</h2>
+          <p className="mt-1 text-sm text-neutral-600">
+            Opens on {formatDate(displayOpenOn) ?? "Unknown date"}
+          </p>
+
+          <div className="mt-6 space-y-4 text-sm text-neutral-700">
+            {isLoading ? (
+              <p>Opening your capsule…</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : message ? (
+              <>
+                <p className="whitespace-pre-wrap leading-relaxed">{message}</p>
+              </>
+            ) : (
+              <p className="text-neutral-600">No message to display yet.</p>
+            )}
+          </div>
+
+          <div className="mt-6 flex justify-end">
             <button
               type="button"
               onClick={handleClose}
-              className="absolute right-4 top-4 text-sm text-neutral-600 transition hover:text-black"
-              aria-label="Close">
-              ✕
+              className="button button-border">
+              Close
             </button>
-
-            <h2 className="text-xl font-semibold">{title}</h2>
-            <p className="mt-1 text-sm text-neutral-600">
-              Opens on {formatDate(displayOpenOn) ?? "Unknown date"}
-            </p>
-
-            <div className="mt-6 space-y-4 text-sm text-neutral-700">
-              {isLoading ? (
-                <p>Opening your capsule…</p>
-              ) : error ? (
-                <p className="text-red-500">{error}</p>
-              ) : message ? (
-                <>
-                  <p className="whitespace-pre-wrap leading-relaxed">
-                    {message}
-                  </p>
-                </>
-              ) : (
-                <p className="text-neutral-600">No message to display yet.</p>
-              )}
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="rounded-full border px-4 py-2 text-sm font-medium transition">
-                Close
-              </button>
-            </div>
           </div>
-        </div>
+        </MessageModal>
       ) : null}
     </>
   );

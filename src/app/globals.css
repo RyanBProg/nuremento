@@ -50,8 +50,16 @@ body {
   @apply w-fit px-4 py-2 rounded-full text-sm font-semibold transition ease-in-out hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[.95];
 }
 
+.button-lg {
+  @apply w-fit px-6 py-3 rounded-full text-lg font-semibold transition ease-in-out hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[.95];
+}
+
 .button-plain {
   @apply hover:outline-none hover:ring-2;
+}
+
+.button-filled {
+  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,0.5)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
 }
 
 .button-filled {

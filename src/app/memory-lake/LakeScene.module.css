@@ -1,11 +1,3 @@
-.landscape:after,
-.landscape:before,
-.landscape *,
-.landscape *:after,
-.landscape *:before {
-  position: absolute;
-}
-
 .landscape {
   --v1: #ae7dbc;
   --v2: #946155;
@@ -21,6 +13,7 @@
   --pad: #336746;
   --transparent-pad: #5e30d900;
 
+  position: absolute;
   height: calc(100vh - 70px);
   background-image: linear-gradient(var(--v1), var(--s1), var(--v1));
   position: relative;
@@ -137,10 +130,12 @@
 }
 
 .mountain {
+  position: absolute;
   bottom: 50%;
   background: var(--s1);
 
   &:before {
+    position: absolute;
     content: "";
     bottom: 0;
     width: inherit;
@@ -181,6 +176,7 @@
   box-shadow: inset 15px 0 10px -10px var(--s1);
 
   &:after {
+    position: absolute;
     content: "";
     border-radius: 60% 0 0 0/100% 0 0 0;
     background: inherit;
@@ -196,6 +192,7 @@
 }
 
 .sun {
+  position: absolute;
   background: rgb(255, 242, 206);
   border-radius: 50%;
   width: 30vmin;
@@ -212,12 +209,14 @@
 }
 
 .sun-container {
+  position: absolute;
   overflow: hidden;
   width: 100%;
   height: 50%;
 }
 
 .sun-container-1:after {
+  position: absolute;
   content: "";
   left: 0;
   right: 0;
@@ -242,11 +241,13 @@
 }
 
 .sun-container-reflection {
+  position: absolute;
   top: 50%;
   background: radial-gradient(circle at 60% 0%, var(--s2), transparent);
 }
 
 .sun-container-reflection .sun {
+  position: absolute;
   background: linear-gradient(rgb(255, 241, 204), rgba(255, 255, 255, 0));
   box-shadow: none;
   filter: blur(5px);
@@ -255,6 +256,7 @@
 }
 
 .cloud {
+  position: absolute;
   width: 50vmin;
   height: 8vmin;
   background: currentcolor;
@@ -273,6 +275,7 @@
 }
 
 .cloud-1 {
+  position: absolute;
   left: auto;
   right: 20vmin;
   top: 15%;
@@ -297,6 +300,7 @@
 }
 
 .water {
+  position: absolute;
   top: 50%;
   bottom: 0;
   left: 0;
@@ -307,6 +311,7 @@
 }
 
 .land-container {
+  position: absolute;
   z-index: 1;
   bottom: 0;
   left: 0;
@@ -314,6 +319,7 @@
 }
 
 .land {
+  position: absolute;
   bottom: 0;
   right: 0;
   height: 130px;
@@ -323,6 +329,7 @@
   border-radius: 0% 200% 0 0/0% 200%;
 
   &:after {
+    position: absolute;
     content: "";
     background: var(--land-2);
     width: 100%;
@@ -337,6 +344,7 @@
 }
 
 .grass {
+  position: absolute;
   height: 240px;
   width: 100px;
   left: -10px;
@@ -367,6 +375,7 @@
 }
 
 .grass-2 {
+  position: absolute;
   height: 140px;
   width: 140px;
   border-radius: 0 60% 0 0/0 100% 0 0;
@@ -377,6 +386,7 @@
 }
 
 .grass-3 {
+  position: absolute;
   height: 75px;
   width: 140px;
   border-radius: 0 60% 0 0/0 100% 0 0;
@@ -387,6 +397,7 @@
 }
 
 .reed {
+  position: absolute;
   height: 200px;
   width: 4px;
   bottom: 180px;
@@ -398,6 +409,7 @@
   animation: reedDrift 10s ease-in-out infinite;
 
   &:after {
+    position: absolute;
     content: "";
     width: 14px;
     height: 45px;
@@ -428,6 +440,7 @@
 }
 
 .lotus {
+  position: absolute;
   width: 90px;
   height: 30px;
   background: conic-gradient(
@@ -477,6 +490,7 @@
 }
 
 .splash {
+  position: absolute;
   width: 8vmin;
   height: 3vmin;
   border: 2px solid var(--s1);
