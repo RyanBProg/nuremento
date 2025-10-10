@@ -66,7 +66,7 @@ export default function Home() {
 
       <button
         type="button"
-        className={`${styles.washedBottle} ${styles.washedBottleActive}`}
+        className={`${styles.washedBottle} ${styles.washedBottleGlow}`}
         aria-label="Open the washed-up bottle">
         <div className={styles.bottleGlass}>
           <div className={styles.bottleHighlight} />
