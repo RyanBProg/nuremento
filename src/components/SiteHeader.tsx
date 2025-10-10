@@ -32,7 +32,7 @@ export function SiteHeader() {
               My Memories
             </Link>
             <Link
-              href="/dashboard/memory-lake"
+              href="/memory-lake"
               className="hidden md:inline button button-plain">
               Memory Lake
             </Link>

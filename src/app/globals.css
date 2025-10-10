@@ -2,7 +2,7 @@
 
 :root {
   color-scheme: light;
-  --background: rgb(254, 250, 235);
+  --background: #feffeb;
   --foreground: #171717;
 }
 
@@ -17,6 +17,12 @@
   --breakpoint-xs: 25rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary-dark: #3a6dda;
+  --color-primary: #8fb3ff;
+  --color-primary-light: #cad5ee;
+  --color-secondary-dark: #1dcce8;
+  --color-secondary: #91d1db;
+  --color-secondary-light: #d1eaee;
 }
 
 body {
@@ -34,11 +40,11 @@ body {
 }
 
 .button-filled {
-  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(50,50,50,0.5)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,0.5)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
 }
 
 .button-border {
-  @apply border border-black hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+  @apply border border-black text-black hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
 }
 
 .button-ai {

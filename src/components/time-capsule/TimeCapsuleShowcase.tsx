@@ -21,9 +21,9 @@ export function TimeCapsuleShowcase() {
     <section
       id="features"
       className="border-b bg-white py-20 md:py-38 px-4 xs:px-8">
-      <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 rounded-xl border bg-background p-6 shadow-[5px_5px_0_rgba(0,0,0,1)]">
+      <article className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 rounded-xl border bg-background p-6 shadow-[5px_5px_0_rgba(0,0,0,1)]">
         <div className="flex flex-col gap-3 text-center">
-          <span className="inline-flex items-center justify-center gap-2 self-center text-xs font-semibold uppercase tracking-[0.3em] text-neutral-600">
+          <span className="inline-flex items-center justify-center gap-2 self-center border-y border-primary-light py-1 px-2 text-primary-dark text-xs font-semibold uppercase tracking-[0.2em]">
             <Timer size={14} />
             Time Capsule
           </span>
@@ -40,7 +40,11 @@ export function TimeCapsuleShowcase() {
             Lock
           </span>
           <button
+            type="button"
+            role="switch"
+            aria-checked={isReady}
             onClick={() => setIsReady((value) => !value)}
+            aria-label="toggle time capsule lock state"
             className={`border relative inline-flex h-6 sm:h-8 w-12 sm:w-16 items-center rounded-full transition-colors duration-500 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 ${
               isReady
                 ? "bg-gradient-to-r from-green-400 to-green-500"
@@ -74,7 +78,7 @@ export function TimeCapsuleShowcase() {
           Tap to open the capsule and preview the joyful experience of unlocking
           a message.
         </p>
-      </div>
+      </article>
     </section>
   );
 }
