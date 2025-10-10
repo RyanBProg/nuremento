@@ -29,7 +29,7 @@ export function SiteHeader() {
             <Link
               href="/dashboard/memories"
               className="hidden md:inline button button-plain">
-              Memories
+              My Memories
             </Link>
             <Link
               href="/dashboard/memory-lake"

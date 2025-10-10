@@ -34,11 +34,15 @@ body {
 }
 
 .button-filled {
-  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(50,50,50,0.7)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+  @apply border border-black bg-black text-white focus-visible:ring-black focus-visible:ring-offset-1 hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(50,50,50,0.5)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
 }
 
 .button-border {
   @apply border border-black hover:-translate-y-[2px] hover:-translate-x-[2px] hover:shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-none;
+}
+
+.button-ai {
+  @apply flex gap-2 rounded-full bg-radial from-fuchsia-600 from-40% to-fuchsia-700 text-white px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-fuchsia-700 focus-visible:ring-offset-2 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[.95];
 }
 
 .card {

@@ -3,39 +3,6 @@ import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { TimeCapsuleShowcase } from "@/components/time-capsule/TimeCapsuleShowcase";
 
-const features = [
-  {
-    title: "Memory Ocean",
-    img: "/images/message-bottle.png",
-    imgAlt: "message bottle",
-    tag: "Cast your memories into the waves",
-    description:
-      "Each day you return, the sea sends one back - a message from your past, floating gently to shore.",
-    link: "#",
-    linkText: "Visit memory ocean",
-  },
-  {
-    title: "Timecapsules",
-    img: "/images/message-bottle.png",
-    imgAlt: "message bottle",
-    tag: "Wisdom from past you",
-    description:
-      "Choose when it resurfaces — a reminder, a reflection, or a surprise from who you once were.",
-    link: "#",
-    linkText: "Create a timecapsule",
-  },
-  {
-    title: "Shooter",
-    img: "/images/message-bottle.png",
-    imgAlt: "message bottle",
-    tag: "Not all memories deserve to stay.",
-    description:
-      "Shoot your bad memories to distruction - point, shoot, breathe out, move on.",
-    link: "#",
-    linkText: "Visit memory ocean",
-  },
-];
-
 export default async function Home() {
   const { userId } = await auth();
 

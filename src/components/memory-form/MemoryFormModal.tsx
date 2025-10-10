@@ -355,7 +355,7 @@ export function MemoryFormModal({ trigger, memory }: MemoryFormModalProps) {
                       type="button"
                       onClick={handleGenerateDescription}
                       disabled={isGeneratingDescription || isSubmitting}
-                      className="flex gap-2 rounded-full border bg-radial from-fuchsia-600 from-40% to-fuchsia-700 text-white px-3 py-1.5 text-xs font-semibold transition ring-fuchsia-700 ring-offset-1 hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                      className="button-ai">
                       <Sparkles size={16} />
                       <span>
                         {isGeneratingDescription
