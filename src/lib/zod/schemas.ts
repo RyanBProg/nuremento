@@ -134,3 +134,17 @@ export const timeCapsuleData = z.object({
   ),
   openOn: requiredDateString,
 });
+
+export const lakeMessageData = z.object({
+  title: requiredTrimmedString(MAX_TITLE_LENGTH, "Title"),
+  message: z.preprocess(
+    (value) => (typeof value === "string" ? value.trim() : value),
+    z
+      .string({ required_error: `Description is required` })
+      .min(20, `Please write a longer description, minimum 20 characters`)
+      .max(
+        MAX_DESCRIPTION_LENGTH,
+        `Description must be ${MAX_DESCRIPTION_LENGTH} characters or less.`
+      )
+  ),
+});

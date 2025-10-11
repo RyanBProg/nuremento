@@ -80,14 +80,11 @@ export function TimeCapsuleCreateModal() {
       return;
     }
 
-    console.log(openOnRaw);
-
     const openOnDate = new Date(`${openOnRaw}T00:00:00`);
     if (Number.isNaN(openOnDate.getTime())) {
       setError("Please choose a valid date.");
       return;
     }
-    console.log(openOnDate);
 
     setIsSubmitting(true);
     setError(null);
@@ -107,9 +104,12 @@ export function TimeCapsuleCreateModal() {
 
       if (!response.ok) {
         const payload = await response.json();
-        const messageText = payload?.error
-          ? payload?.error
-          : "We could not save this time capsule. Please try again.";
+        const messageText =
+          typeof payload?.error === "string"
+            ? payload.error
+            : payload.error.fieldErrors.message
+            ? payload.error.fieldErrors.message
+            : "We could not save this time capsule. Please try again.";
         setError(messageText);
         return;
       }

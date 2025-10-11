@@ -3,7 +3,6 @@
 import { TimeCapsuleCreateModal } from "./TimeCapsuleCreateModal";
 import TimeCapsule from "./TimeCapsule";
 import { MoveRight } from "lucide-react";
-import { formatDateOnly } from "@/lib/utils";
 
 export type TimeCapsuleSummary = {
   id: string;
@@ -35,18 +34,8 @@ export function TimeCapsulesPanel({ capsules }: TimeCapsulesPanelProps) {
           <div>
             <ul className="mt-14 flex gap-4 overflow-scroll px-4 sm:px-8 pb-5">
               {capsules.map((capsule) => (
-                <li
-                  key={capsule.id}
-                  className="max-w-min flex flex-col justify-between gap-3">
-                  <TimeCapsule capsule={capsule} />
-                  <div className="mt-5 space-y-2">
-                    <h4 className="text-lg font-semibold max-w-[250px] md:max-w-[350px] truncate">
-                      {capsule.title}
-                    </h4>
-                    <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-                      {formatDateOnly(capsule.openOn)}
-                    </p>
-                  </div>
+                <li key={capsule.id}>
+                  <TimeCapsule capsule={capsule} showcase={false} />
                 </li>
               ))}
             </ul>

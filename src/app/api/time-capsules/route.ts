@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
           id: record.id,
           title: record.title,
           message: record.message,
-          openOn: record.openOn?.toString?.().slice(0, 10) ?? record.openOn,
+          openOn: record.openOn,
         },
       },
       { status: 201 }
@@ -199,7 +199,7 @@ export async function DELETE(req: NextRequest) {
         and(eq(timeCapsules.id, capsuleId), eq(timeCapsules.clerkId, userId))
       );
 
-    return NextResponse.json({ ok: true }, { status: 204 });
+    return NextResponse.json({ status: 204 });
   } catch (err) {
     console.error("Unexpected error deleting capsule", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

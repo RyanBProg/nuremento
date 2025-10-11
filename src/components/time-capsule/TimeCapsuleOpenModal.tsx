@@ -1,29 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
 import MessageModal from "../MessageModal";
-
-type LoaderResult = {
-  message: string;
-  openedAt?: string | null;
-  openOn?: string;
-};
+import LoadingSpinner from "../LoadingSpinner";
+import { TimeCapsuleSummary } from "./TimeCapsulesPanel";
 
 type TimeCapsuleOpenModalProps = {
-  capsuleId: string;
-  title: string;
-  openOn: string;
-  message?: string | null;
-  loader?: () => Promise<LoaderResult>;
-  canOpenOverride?: boolean;
-  trigger: (props: { open: () => void; disabled?: boolean }) => ReactNode;
+  capsule: TimeCapsuleSummary;
+  mode: "preview" | "live";
+  isUnlockedOverride?: boolean;
 };
 
 type CapsuleResponse =
@@ -69,144 +55,183 @@ function formatDate(value: string | null) {
   }).format(date);
 }
 
+function hasReachedOpenDate(value: string | null | undefined) {
+  if (!value) {
+    return false;
+  }
+
+  const openDate = toDate(value);
+
+  if (!openDate) {
+    return false;
+  }
+
+  const today = new Date();
+  const todayMidnight = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    0,
+    0,
+    0,
+    0
+  );
+
+  return todayMidnight >= openDate;
+}
+
 export function TimeCapsuleOpenModal({
-  capsuleId,
-  title,
-  openOn,
-  message: initialMessage,
-  loader,
-  canOpenOverride,
-  trigger,
+  capsule,
+  mode,
+  isUnlockedOverride,
 }: TimeCapsuleOpenModalProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [displayOpenOn, setDisplayOpenOn] = useState<string>(openOn);
+  const [displayMessage, setDisplayMessage] = useState<string | null>(
+    capsule.message || null
+  );
 
-  const defaultLoader = useCallback(async () => {
-    const response = await fetch(`/api/time-capsules?id=${capsuleId}`, {
-      method: "GET",
-    });
+  const isUnlocked =
+    typeof isUnlockedOverride === "boolean"
+      ? isUnlockedOverride
+      : hasReachedOpenDate(capsule.openOn);
 
-    const payload = (await response.json()) as CapsuleResponse;
-
-    if (!response.ok || !("capsule" in payload)) {
-      const messageText =
-        "error" in payload
-          ? payload.error
-          : "We could not open this time capsule. Please try again.";
-      throw new Error(messageText);
-    }
-
-    router.refresh();
-
-    return {
-      message: payload.capsule.message,
-      openedAt: payload.capsule.openedAt ?? payload.capsule.openOn,
-      openOn: payload.capsule.openOn,
-    };
-  }, [capsuleId, router]);
-
-  const isUnlocked = useMemo(() => {
-    if (typeof canOpenOverride === "boolean") {
-      return canOpenOverride;
-    }
-
-    const today = new Date();
-    const openDate = toDate(openOn);
-
-    if (!openDate) {
-      return false;
-    }
-
-    const todayMidnight = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      0,
-      0,
-      0,
-      0
-    );
-
-    return todayMidnight >= openDate;
-  }, [canOpenOverride, openOn]);
+  useEffect(() => {
+    setDisplayMessage(capsule.message || null);
+    setError(null);
+    setIsLoading(false);
+  }, [capsule.id, capsule.message]);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
+    if (!isUnlocked) {
+      setIsLoading(false);
+      setError("This time capsule is still locked.");
+      return;
+    }
+
+    if (mode === "preview") {
+      setIsLoading(false);
+      return;
+    }
+
+    if (displayMessage) {
+      setIsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
     async function loadCapsule() {
       setIsLoading(true);
       setError(null);
 
       try {
-        if (initialMessage && !loader) {
-          setMessage(initialMessage);
-          setDisplayOpenOn(openOn);
-          return;
+        const response = await fetch(`/api/time-capsules?id=${capsule.id}`, {
+          method: "GET",
+        });
+
+        const payload = (await response.json()) as CapsuleResponse;
+
+        if (!response.ok || !("capsule" in payload)) {
+          const messageText =
+            "error" in payload
+              ? payload.error
+              : "We could not open this time capsule. Please try again.";
+          throw new Error(messageText);
         }
 
-        const loaderFn = loader ?? defaultLoader;
-        const result = await loaderFn();
-
-        setMessage(result.message);
-        if (result.openOn) {
-          setDisplayOpenOn(result.openOn);
+        if (!cancelled) {
+          setDisplayMessage(payload.capsule.message);
+          setIsLoading(false);
         }
       } catch (err) {
         console.error(err);
-        setError(
-          err instanceof Error
-            ? err.message
-            : "We could not open this time capsule. Please try again."
-        );
-      } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "We could not open this time capsule. Please try again."
+          );
+          setIsLoading(false);
+        }
       }
     }
 
-    if (isUnlocked) {
-      void loadCapsule();
-    } else {
-      setError("This time capsule is still locked.");
+    loadCapsule();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [capsule.id, displayMessage, isOpen, isUnlocked, mode]);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/time-capsules?id=${capsule.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: unknown;
+        } | null;
+        const message =
+          typeof payload?.error === "string"
+            ? payload.error
+            : "We could not delete this time capsule. Please try again.";
+        setError(message);
+        return;
+      }
+
+      router.refresh();
+      setIsOpen(false);
+      setDisplayMessage(null);
+    } catch (deleteError) {
+      console.error(deleteError);
+      setError("We could not delete this time capsule. Please try again.");
+    } finally {
+      setIsDeleting(false);
       setIsLoading(false);
     }
-  }, [defaultLoader, initialMessage, isOpen, isUnlocked, loader, openOn]);
-
-  const handleOpen = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    setMessage(null);
-    setError(null);
-    setIsLoading(false);
-  }, []);
+  };
 
   return (
     <>
-      {trigger({ open: handleOpen, disabled: !isUnlocked })}
+      <button
+        type="button"
+        onClick={() => {
+          setError(null);
+          setIsOpen(true);
+        }}
+        disabled={!isUnlocked}
+        className="button button-border">
+        {isLoading ? <LoadingSpinner size="5" /> : "Open"}
+      </button>
 
-      {isOpen ? (
+      {isOpen && !isLoading ? (
         <MessageModal>
-          <h2 className="text-xl font-semibold">{title}</h2>
+          <h2 className="text-xl font-semibold">{capsule.title}</h2>
           <p className="mt-1 text-sm text-neutral-600">
-            Opens on {formatDate(displayOpenOn) ?? "Unknown date"}
+            Opens on {formatDate(capsule.openOn) ?? "Unknown date"}
           </p>
 
           <div className="mt-6 space-y-4 text-sm text-neutral-700">
-            {isLoading ? (
-              <p>Opening your capsule…</p>
-            ) : error ? (
+            {error ? (
               <p className="text-red-500">{error}</p>
-            ) : message ? (
+            ) : displayMessage ? (
               <>
-                <p className="whitespace-pre-wrap leading-relaxed">{message}</p>
+                <p className="whitespace-pre-wrap leading-relaxed">
+                  {displayMessage}
+                </p>
               </>
             ) : (
               <p className="text-neutral-600">No message to display yet.</p>
@@ -214,12 +239,22 @@ export function TimeCapsuleOpenModal({
           </div>
 
           <div className="mt-6 flex justify-end">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="button button-border">
-              Close
-            </button>
+            {typeof isUnlockedOverride === "boolean" ? (
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="button button-border">
+                Close
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="button button-border">
+                {isDeleting ? <LoadingSpinner size="4" /> : "Delete"}
+              </button>
+            )}
           </div>
         </MessageModal>
       ) : null}

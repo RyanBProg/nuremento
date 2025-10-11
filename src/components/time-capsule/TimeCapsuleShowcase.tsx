@@ -8,7 +8,6 @@ const demoCapsuleBase = {
   id: "demo-capsule",
   title: "Letter from calm you",
   openOn: "2025-10-01",
-  openedAt: null,
   createdAt: new Date().toISOString(),
   message:
     "Hey, future me.\n\nIf you're reading this, you made it through another season. Remember the way the air smelt after the rain today and how quiet things felt once you let go of the pressure to be everywhere at once. You're doing enough. Rest is progress too.\n\nTake one slow breath for the version of you who wrote this and keep going gently.",
@@ -71,7 +70,8 @@ export function TimeCapsuleShowcase() {
               ? new Date().toISOString().slice(0, 10)
               : demoCapsuleBase.openOn,
           }}
-          isReadyOverride={isReady}
+          showcase={true}
+          isUnlockedOverride={isReady}
         />
 
         <p className="max-w-2xl text-center text-xs text-neutral-500 sm:text-sm">
