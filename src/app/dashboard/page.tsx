@@ -1,9 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { DailyMemoryCard } from "@/components/memories/DailyMemoryCard";
 import { TimeCapsulesDashboardSection } from "@/components/time-capsule/TimeCapsulesDashboardSection";
 import { RecentMemoriesSection } from "@/components/memories/RecentMemoriesSection";
+import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
 // import { ensureUserForClerkAccount } from "@/db/users";
 
 export default async function Home() {
@@ -31,7 +31,7 @@ export default async function Home() {
                 Pick a quick action to add more context or reflect on a moment.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-3">
-                <CreateMemoryButton />
+                <MemoryFormModal mode="create" />
                 <Link
                   href="/dashboard/memories"
                   className="button button-border">

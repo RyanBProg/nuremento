@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { db } from "@/db/client";
 import { memories } from "@/db/schema";
 import { MemoriesList } from "@/components/memories/MemoriesList";
-import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
+import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
 
 export default async function MemoriesPage() {
   const { userId } = await auth();
@@ -39,7 +39,7 @@ export default async function MemoriesPage() {
               Browse, edit, or remove your saved memories.
             </p>
           </div>
-          <CreateMemoryButton />
+          <MemoryFormModal mode="create" />
         </div>
       </section>
 

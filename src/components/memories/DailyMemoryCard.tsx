@@ -5,8 +5,8 @@ import { db } from "@/db/client";
 import { memories } from "@/db/schema";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
-import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { MemoryCard } from "@/components/memories/MemoryCard";
+import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
 
 type DailyMemoryCardProps = {
   userId: string;
@@ -119,7 +119,7 @@ export async function DailyMemoryCard({ userId }: DailyMemoryCardProps) {
           title="Capture your first memory"
           subtitle="No memories yet"
           description="You haven't logged any memories yet. Record your first one to start building a daily reflection habit."
-          actions={<CreateMemoryButton />}
+          actions={<MemoryFormModal mode="create" />}
         />
       )}
     </section>

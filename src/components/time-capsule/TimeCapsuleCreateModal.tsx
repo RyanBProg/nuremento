@@ -157,7 +157,6 @@ export function TimeCapsuleCreateModal() {
             <label className="space-y-2 text-sm font-medium">
               <span className="block">Title</span>
               <input
-                // ref={inputRef}
                 type="text"
                 value={formValues.title}
                 onChange={(event) =>

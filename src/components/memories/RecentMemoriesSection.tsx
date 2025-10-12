@@ -5,8 +5,8 @@ import { db } from "@/db/client";
 import { memories } from "@/db/schema";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
-import { CreateMemoryButton } from "@/components/memory-form/CreateMemoryButton";
 import { MemoryCard } from "@/components/memories/MemoryCard";
+import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
 
 type RecentMemoriesSectionProps = {
   userId: string;
@@ -113,7 +113,7 @@ export async function RecentMemoriesSection({
             className="mx-auto"
             title="No recent memories yet"
             description="Once you start logging memories, your most recent entries will show up here for easy access."
-            actions={<CreateMemoryButton />}
+            actions={<MemoryFormModal mode="create" />}
           />
         )}
       </div>

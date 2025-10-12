@@ -4,10 +4,9 @@ import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { MemoryCard } from "@/components/memories/MemoryCard";
-import {
-  MemoryFormModal,
-  type MemoryFormData,
-} from "@/components/memory-form/MemoryFormModal";
+import MemoryFormModal, {
+  MemoryFormData,
+} from "../memory-form/MemoryFormModal";
 
 type MemoryRecord = {
   thumbnailUrl: string | null;
@@ -299,17 +298,7 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                       }
                       actions={
                         <div className="mt-auto flex w-full gap-2">
-                          <MemoryFormModal
-                            memory={formData}
-                            trigger={({ open }) => (
-                              <button
-                                type="button"
-                                onClick={open}
-                                className="flex-1 button button-filled">
-                                Edit
-                              </button>
-                            )}
-                          />
+                          <MemoryFormModal memory={formData} mode="edit" />
                           <button
                             type="button"
                             className="flex-1 button button-border disabled:cursor-not-allowed disabled:opacity-70"

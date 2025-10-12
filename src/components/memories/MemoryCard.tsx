@@ -26,7 +26,6 @@ export function MemoryCard({
       }`}>
       {thumbnailUrl ? (
         <div className="relative overflow-hidden rounded-lg border aspect-square">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={thumbnailUrl}
             alt={`Thumbnail for ${title}`}
