@@ -11,17 +11,17 @@ import { lakeMessageData } from "@/lib/zod/schemas";
 
 export const runtime = "nodejs";
 
-type LakeMemoryRow = typeof lakeNotes.$inferSelect;
+type LakeNoteRow = typeof lakeNotes.$inferSelect;
 
 function getTodayDate() {
   return format(startOfDay(new Date()), "yyyy-MM-dd");
 }
 
-function pickDeterministicMemory(
-  items: LakeMemoryRow[],
+function pickDeterministicNote(
+  items: LakeNoteRow[],
   userId: string,
   dayKey: string
-): LakeMemoryRow {
+): LakeNoteRow {
   const hash = createHash("sha256").update(`${userId}:${dayKey}`).digest();
   const index = hash.readUInt32BE(0) % items.length;
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        memory: {
+        note: {
           id: record.id,
           title: record.title,
           message: record.message,
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err.flatten() }, { status: 400 });
     }
 
-    console.error("Unexpected error creating lake memory", err);
+    console.error("Unexpected error creating lake note", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
@@ -94,14 +94,14 @@ export async function GET() {
     // [Todo] limit the return amount for notesForUser
 
     if (notesForUser.length === 0) {
-      return NextResponse.json({ memory: null }, { status: 200 });
+      return NextResponse.json({ note: null }, { status: 200 });
     }
 
-    const chosen = pickDeterministicMemory(notesForUser, userId, todayDate);
+    const chosen = pickDeterministicNote(notesForUser, userId, todayDate);
 
     return NextResponse.json(
       {
-        memory: {
+        note: {
           id: chosen.id,
           title: chosen.title,
           message: chosen.message,
@@ -124,30 +124,30 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const memoryId = searchParams.get("id");
+    const noteId = searchParams.get("id");
 
-    if (!memoryId) {
+    if (!noteId) {
       return NextResponse.json(
-        { error: "Missing lake memory id." },
+        { error: "Missing lake note id." },
         { status: 400 }
       );
     }
 
     const deleted = await db
       .delete(lakeNotes)
-      .where(and(eq(lakeNotes.id, memoryId), eq(lakeNotes.clerkId, userId)))
+      .where(and(eq(lakeNotes.id, noteId), eq(lakeNotes.clerkId, userId)))
       .returning({ id: lakeNotes.id });
 
     if (deleted.length === 0) {
       return NextResponse.json(
-        { error: "Lake memory not found." },
+        { error: "Lake note not found." },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ ok: true }, { status: 204 });
+    return NextResponse.json({ status: 204 });
   } catch (err) {
-    console.error("Unexpected error deleting lake memory", err);
+    console.error("Unexpected error deleting lake note", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

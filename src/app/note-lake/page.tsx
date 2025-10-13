@@ -1,11 +1,20 @@
 "use client";
 
-import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { ArrowUp, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styles from "./LakeScene.module.css";
 import MessageModal from "@/components/MessageModal";
-import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { NoteLakeCreateModal } from "@/components/memory-lake/NoteLakeCreateModal";
+
+type LakeNoteResponse = {
+  note: {
+    id: string;
+    title: string;
+    message: string;
+    createdAt?: string | null;
+  } | null;
+};
 
 type LakeNote = {
   id: string;
@@ -18,7 +27,7 @@ const defaultNote = {
   id: "123",
   title: "Tide-carried note",
   message:
-    "Today I promised to write more letters. The tide felt warm on my feet as I said it out loud.",
+    "Add notes to your lake and enjoy opening wonderful messages from your past self.",
   createdAt: new Date().toISOString().slice(0, 10),
 };
 
@@ -29,18 +38,10 @@ export default function Home() {
   const [volume, setVolume] = useState(0.5);
   const [dailyBottle, setDailyBottle] = useState<LakeNote | null>(null);
   const [dailyOpen, setDailyOpen] = useState(false);
-  const [isLoadingBottle, setIsLoadingBottle] = useState(false);
+  const [isLoadingBottle, setIsLoadingBottle] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const { isLoaded, isSignedIn } = useAuth();
-
-  // check if user is signed in
-  // if not, set dailyBottle as dailyNote (dont fetch anything, this is so non authed users can still preview this page)
-  // if so, try to grab a daily message (api/lake-notes)
-  // if it returns one, update dailyBottle and show the bottle
-  // if not, remove default dailyBottle data and dont show the bottle
-
-  // the delete button also need to hit the api/lake-notes route. once the note has been read, it should be deleted.
 
   useEffect(() => {
     if (!isLoaded) {
@@ -72,26 +73,19 @@ export default function Home() {
           return;
         }
 
-        const payload = (await response.json()) as {
-          memory: {
-            id: string;
-            title: string;
-            message: string;
-            createdAt?: string | null;
-          } | null;
-        };
+        const payload = (await response.json()) as LakeNoteResponse;
 
         if (cancelled) {
           return;
         }
 
-        if (payload.memory) {
+        if (payload.note) {
           setDailyBottle({
-            id: payload.memory.id,
-            title: payload.memory.title,
-            message: payload.memory.message,
+            id: payload.note.id,
+            title: payload.note.title,
+            message: payload.note.message,
             createdAt:
-              payload.memory.createdAt ?? new Date().toISOString().slice(0, 10),
+              payload.note.createdAt ?? new Date().toISOString().slice(0, 10),
           });
         } else {
           setDailyBottle(null);
@@ -243,59 +237,85 @@ export default function Home() {
   return (
     <>
       <section className={styles.landscape}>
-        <audio
-          ref={audioRef}
-          src="/sounds/forest-audio.mp3"
-          autoPlay
-          loop
-          muted
-        />
-        <div
-          className={styles.audioControls}
-          role="group"
-          aria-label="Note Lake soundscape controls">
-          <button
-            type="button"
-            className={styles.audioButton}
-            onClick={togglePlayback}
-            aria-label={
-              isPlaying ? "Pause ambient audio" : "Play ambient audio"
-            }>
-            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
-          </button>
-          <button
-            type="button"
-            className={styles.audioButton}
-            onClick={toggleMute}
-            aria-label={
-              isMuted ? "Unmute ambient audio" : "Mute ambient audio"
-            }>
-            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-          </button>
-          <label className={styles.audioSliderLabel}>
-            <span className={styles.audioSliderText}>Vol</span>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.05}
-              value={isMuted ? 0 : volume}
-              onChange={handleVolumeChange}
-              className={styles.audioSlider}
-              aria-label="Volume"
+        {!isLoadingBottle && (
+          <>
+            <audio
+              ref={audioRef}
+              src="/sounds/forest-audio.mp3"
+              autoPlay
+              loop
+              muted
             />
-          </label>
-        </div>
+            <div
+              className={styles.audioControls}
+              role="group"
+              aria-label="Note Lake soundscape controls">
+              <button
+                type="button"
+                className={styles.audioButton}
+                onClick={togglePlayback}
+                aria-label={
+                  isPlaying ? "Pause ambient audio" : "Play ambient audio"
+                }>
+                {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+              </button>
+              <button
+                type="button"
+                className={styles.audioButton}
+                onClick={toggleMute}
+                aria-label={
+                  isMuted ? "Unmute ambient audio" : "Mute ambient audio"
+                }>
+                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              </button>
+              <label className={styles.audioSliderLabel}>
+                <span className={styles.audioSliderText}>Vol</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  className={styles.audioSlider}
+                  aria-label="Volume"
+                />
+              </label>
+            </div>
+          </>
+        )}
 
-        <SignedIn>
-          <NoteLakeCreateModal />
-        </SignedIn>
+        {!isLoadingBottle &&
+          (isSignedIn ? (
+            <>
+              <NoteLakeCreateModal />
+              {!dailyBottle && (
+                <div className="absolute z-20 bottom-0 inset-x-0 p-4 rounded bg-white/30 flex justify-center items-center gap-2">
+                  <ArrowUp size={14} />
+                  <p className="text-center">
+                    No notes yet — start adding to discover them washed ashore.
+                  </p>
+                  <ArrowUp size={14} />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="absolute z-20 top-0 inset-x-0 p-4 rounded bg-white/30">
+              <p className="text-center">
+                Sign in to add messages to your lake
+              </p>
+            </div>
+          ))}
 
-        <SignedOut>
-          <p className="p-4 rounded bg-white/40">
-            <div>Sign in to add meesages to your lake</div>
-          </p>
-        </SignedOut>
+        {isLoadingBottle && (
+          <div className="fixed inset-0 bg-black/50 z-20">
+            <div className="h-full flex flex-col justify-center items-center">
+              <div
+                className={`size-20 border-3 border-kinori-teal border-t-transparent rounded-full animate-spin`}
+              />
+            </div>
+          </div>
+        )}
 
         {/* mountains */}
         <div className={`${styles.mountain} ${styles["mountain-1"]}`}></div>
