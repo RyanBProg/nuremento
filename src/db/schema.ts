@@ -17,8 +17,6 @@ export const users = pgTable("users", {
   email: text("email"),
   firstName: text("first_name"),
   lastName: text("last_name"),
-  username: text("username"),
-  imageUrl: text("image_url"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -56,7 +54,9 @@ export const memories = pgTable(
       columns: [table.clerkId],
       foreignColumns: [users.clerkId],
       name: "memories_users_clerk_fk",
-    }),
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
   ]
 );
 
@@ -81,12 +81,14 @@ export const timeCapsules = pgTable(
       columns: [table.clerkId],
       foreignColumns: [users.clerkId],
       name: "time_capsules_users_clerk_fk",
-    }),
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
   ]
 );
 
-export const lakeMessages = pgTable(
-  "lake_messages",
+export const lakeNotes = pgTable(
+  "lake_notes",
   {
     id: uuid("id")
       .default(sql`gen_random_uuid()`)
@@ -99,37 +101,13 @@ export const lakeMessages = pgTable(
       .notNull(),
   },
   (table) => [
-    index("lake_messages_clerk_idx").on(table.clerkId),
+    index("lake_lake_notes_clerk_idx").on(table.clerkId),
     foreignKey({
       columns: [table.clerkId],
       foreignColumns: [users.clerkId],
-      name: "lake_messages_users_clerk_fk",
-    }),
-  ]
-);
-
-export const lakeMessage = pgTable(
-  "lake_message",
-  {
-    id: uuid("id")
-      .default(sql`gen_random_uuid()`)
-      .primaryKey(),
-    clerkId: text("clerk_id").notNull().unique(),
-    lastOpenedOn: date("last_opened_on"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    index("lake_memory_clerk_idx").on(table.clerkId),
-    foreignKey({
-      columns: [table.clerkId],
-      foreignColumns: [users.clerkId],
-      name: "lake_message_users_clerk_fk",
-    }),
+      name: "lake_lake_notes_users_clerk_fk",
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
   ]
 );

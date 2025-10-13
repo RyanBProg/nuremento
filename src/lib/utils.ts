@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function formatDate(value: string | Date | null): string {
   if (!value) {
     return "—";
@@ -40,4 +42,20 @@ function toDate(value: string) {
     return null;
   }
   return date;
+}
+
+export function normalizeTimestampToDate(value: unknown) {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    return value.slice(0, 10);
+  }
+
+  if (value instanceof Date) {
+    return format(value, "yyyy-MM-dd");
+  }
+
+  return null;
 }

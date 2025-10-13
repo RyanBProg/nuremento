@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       }
 
       try {
-        // find and delete all s3 images for this account
+        // [Todo] find and delete all s3 images for this account
         await db.delete(users).where(eq(users.clerkId, clerkId));
       } catch (error) {
         console.error("Error deleting user from Clerk webhook", error);

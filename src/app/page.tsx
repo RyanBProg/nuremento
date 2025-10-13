@@ -55,7 +55,7 @@ export default async function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/70 flex items-center justify-center px-4 xs:px-8">
           <article className="card h-fit w-fit max-w-lg flex flex-col p-8">
-            <h2 className="font-semibold text-xl">Memory Lake</h2>
+            <h2 className="font-semibold text-xl">Note Lake</h2>
             <p className="mb-4 italic text-neutral-600">
               Cast your memories into the waves
             </p>
@@ -64,8 +64,8 @@ export default async function Home() {
               past, floating gently to shore.
             </p>
             <div className="flex-1 flex items-end">
-              <Link className="button button-border" href="/memory-lake">
-                Visit memory lake
+              <Link className="button button-border" href="/note-lake">
+                Visit note lake
               </Link>
             </div>
           </article>

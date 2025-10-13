@@ -122,7 +122,6 @@ export default function MemoryFormModal({ mode, memory }: Props) {
       document.addEventListener("keydown", onKeyDown);
     } else {
       dialogRef.current?.close();
-      openButtonRef.current?.focus();
     }
 
     return () => document.removeEventListener("keydown", onKeyDown);

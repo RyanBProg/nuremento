@@ -1,54 +1,119 @@
 "use client";
 
-import { Pause, Play, Plus, Volume2, VolumeX } from "lucide-react";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styles from "./LakeScene.module.css";
 import MessageModal from "@/components/MessageModal";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
+import { NoteLakeCreateModal } from "@/components/memory-lake/NoteLakeCreateModal";
 
-type OceanMemory = {
+type LakeNote = {
   id: string;
-  text: string;
+  title: string;
+  message: string;
   createdAt: string;
 };
 
-const randomFrom = <T,>(items: T[]): T | null => {
-  if (!items.length) {
-    return null;
-  }
-
-  const index = Math.floor(Math.random() * items.length);
-  return items[index];
+const defaultNote = {
+  id: "123",
+  title: "Tide-carried note",
+  message:
+    "Today I promised to write more letters. The tide felt warm on my feet as I said it out loud.",
+  createdAt: new Date().toISOString().slice(0, 10),
 };
-
-const createMemory = (text: string): OceanMemory => ({
-  id: `memory-${
-    globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2, 10)
-  }`,
-  text,
-  createdAt: new Date().toISOString(),
-});
 
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.5);
+  const [dailyBottle, setDailyBottle] = useState<LakeNote | null>(null);
+  const [dailyOpen, setDailyOpen] = useState(false);
+  const [isLoadingBottle, setIsLoadingBottle] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { isLoaded, isSignedIn } = useAuth();
 
-  const seeds = useMemo<OceanMemory[]>(
-    () => [
-      createMemory(
-        "Today I promised to write more letters. The tide felt warm on my feet as I said it out loud."
-      ),
-      createMemory(
-        "Grandma's stories about the moon guiding sailors still make me feel safe. I hope I remember them forever."
-      ),
-      createMemory(
-        "I laughed until I cried over pancakes this morning. May future-me taste that joy again."
-      ),
-    ],
-    []
-  );
+  // check if user is signed in
+  // if not, set dailyBottle as dailyNote (dont fetch anything, this is so non authed users can still preview this page)
+  // if so, try to grab a daily message (api/lake-notes)
+  // if it returns one, update dailyBottle and show the bottle
+  // if not, remove default dailyBottle data and dont show the bottle
+
+  // the delete button also need to hit the api/lake-notes route. once the note has been read, it should be deleted.
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    if (!isSignedIn) {
+      setDailyBottle(defaultNote);
+      setIsLoadingBottle(false);
+      setDeleteError(null);
+      return;
+    }
+
+    setDailyBottle(null);
+    let cancelled = false;
+
+    async function loadDailyBottle() {
+      setIsLoadingBottle(true);
+      setDeleteError(null);
+
+      try {
+        const response = await fetch("/api/lake-notes", { method: "GET" });
+
+        if (!response.ok) {
+          console.error("Failed to fetch lake note", response.status);
+          if (!cancelled) {
+            setDailyBottle(null);
+          }
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          memory: {
+            id: string;
+            title: string;
+            message: string;
+            createdAt?: string | null;
+          } | null;
+        };
+
+        if (cancelled) {
+          return;
+        }
+
+        if (payload.memory) {
+          setDailyBottle({
+            id: payload.memory.id,
+            title: payload.memory.title,
+            message: payload.memory.message,
+            createdAt:
+              payload.memory.createdAt ?? new Date().toISOString().slice(0, 10),
+          });
+        } else {
+          setDailyBottle(null);
+        }
+      } catch (error) {
+        console.error("Error fetching lake note", error);
+        if (!cancelled) {
+          setDailyBottle(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingBottle(false);
+        }
+      }
+    }
+
+    loadDailyBottle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoaded, isSignedIn]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -74,11 +139,6 @@ export default function Home() {
       audio.removeEventListener("pause", handlePause);
     };
   }, []);
-
-  const [dailyBottle, setDailyBottle] = useState<OceanMemory | null>(() =>
-    randomFrom(seeds)
-  );
-  const [dailyOpen, setDailyOpen] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -134,6 +194,52 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (!dailyBottle) {
+      setDailyOpen(false);
+    }
+  }, [dailyBottle]);
+
+  const handleDelete = async () => {
+    if (!dailyBottle) {
+      return;
+    }
+
+    if (!isSignedIn) {
+      setDailyOpen(false);
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const response = await fetch(`/api/lake-notes?id=${dailyBottle.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: unknown;
+        } | null;
+        const message =
+          typeof payload?.error === "string"
+            ? payload.error
+            : "We could not delete this note. Please try again.";
+        setDeleteError(message);
+        return;
+      }
+
+      setDailyBottle(null);
+      setDailyOpen(false);
+    } catch (error) {
+      console.error("Error deleting lake note", error);
+      setDeleteError("We could not delete this note. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
       <section className={styles.landscape}>
@@ -147,7 +253,7 @@ export default function Home() {
         <div
           className={styles.audioControls}
           role="group"
-          aria-label="Memory Lake soundscape controls">
+          aria-label="Note Lake soundscape controls">
           <button
             type="button"
             className={styles.audioButton}
@@ -182,9 +288,7 @@ export default function Home() {
         </div>
 
         <SignedIn>
-          <button className="z-20 absolute top-24 right-5 button-lg button-filled flex items-center gap-3">
-            <Plus /> New message
-          </button>
+          <NoteLakeCreateModal />
         </SignedIn>
 
         <SignedOut>
@@ -240,41 +344,62 @@ export default function Home() {
           <div className={styles["grass-3"]}></div>
           <div className={styles.reed}></div>
         </div>
+
         {/* bottle */}
-        <button
-          type="button"
-          onClick={() => setDailyOpen(true)}
-          className={`${styles.washedBottle} ${styles.washedBottleGlow}`}
-          aria-label="Open the washed-up bottle">
-          <div className={styles.bottleGlass}>
-            <div className={styles.bottleHighlight} />
-            <div className={styles.bottleShadow} />
-          </div>
-          <div className={styles.bottleCork} />
-          <div className={styles.bottleScroll} />
-        </button>
+        {dailyBottle ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setDeleteError(null);
+                setDailyOpen(true);
+              }}
+              className={`${styles.washedBottle} ${styles.washedBottleGlow}`}
+              aria-label="Open the washed-up bottle"
+              disabled={isLoadingBottle}>
+              <div className={styles.bottleGlass}>
+                <div className={styles.bottleHighlight} />
+                <div className={styles.bottleShadow} />
+              </div>
+              <div className={styles.bottleCork} />
+              <div className={styles.bottleScroll} />
+            </button>
+            <div className={styles["dirt-mask"]}></div>
+          </>
+        ) : null}
         {/* bottle dirk mask */}
-        <div className={styles["dirt-mask"]}></div>
       </section>
       {/* bottle message modal */}
       {dailyBottle && dailyOpen && (
         <MessageModal>
           <h3 className="relative text-lg font-semibold text-slate-900">
-            Tide-carried memory
+            {dailyBottle.title}
           </h3>
           <p className="relative mt-3 whitespace-pre-line text-pretty text-slate-700">
-            {dailyBottle.text}
+            {dailyBottle.message}
           </p>
           <p className="relative mt-4 text-xs uppercase tracking-wider text-slate-400">
-            Bottled 04/04/2025
+            Bottled {dailyBottle.createdAt}
           </p>
-          <div className="relative mt-6 flex justify-end">
+          {deleteError ? (
+            <p className="relative mt-4 text-sm text-red-500">{deleteError}</p>
+          ) : null}
+          <div className="relative mt-6 flex justify-end gap-3">
             <button
               type="button"
               className="relative button button-border"
               onClick={() => setDailyOpen(false)}>
-              Delete
+              Close
             </button>
+            {isSignedIn && (
+              <button
+                type="button"
+                className="relative button button-filled"
+                onClick={handleDelete}
+                disabled={isDeleting}>
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            )}
           </div>
         </MessageModal>
       )}

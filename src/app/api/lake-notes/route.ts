@@ -6,30 +6,14 @@ import { createHash } from "node:crypto";
 import z from "zod";
 
 import { db } from "@/db/client";
-import { lakeMessages, lakeMessage } from "@/db/schema";
+import { lakeNotes } from "@/db/schema";
 import { lakeMessageData } from "@/lib/zod/schemas";
 
 export const runtime = "nodejs";
 
-type LakeMemoryRow = typeof lakeMessages.$inferSelect;
+type LakeMemoryRow = typeof lakeNotes.$inferSelect;
 
-function normalizeDateColumn(value: unknown) {
-  if (!value) {
-    return null;
-  }
-
-  if (typeof value === "string") {
-    return value.slice(0, 10);
-  }
-
-  if (value instanceof Date) {
-    return format(value, "yyyy-MM-dd");
-  }
-
-  return null;
-}
-
-function getTodayKey() {
+function getTodayDate() {
   return format(startOfDay(new Date()), "yyyy-MM-dd");
 }
 
@@ -37,7 +21,7 @@ function pickDeterministicMemory(
   items: LakeMemoryRow[],
   userId: string,
   dayKey: string
-) {
+): LakeMemoryRow {
   const hash = createHash("sha256").update(`${userId}:${dayKey}`).digest();
   const index = hash.readUInt32BE(0) % items.length;
 
@@ -52,11 +36,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body: unknown;
-
-    try {
-      body = await req.json();
-    } catch {
+    const body = await req.json();
+    if (!body) {
       return NextResponse.json(
         { error: "Invalid JSON body." },
         { status: 400 }
@@ -66,7 +47,7 @@ export async function POST(req: NextRequest) {
     const { title, message } = lakeMessageData.parse(body);
 
     const [record] = await db
-      .insert(lakeMessages)
+      .insert(lakeNotes)
       .values({
         clerkId: userId,
         title,
@@ -102,45 +83,21 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const todayKey = getTodayKey();
+    const todayDate = getTodayDate();
 
-    const [status] = await db
+    const notesForUser = await db
       .select()
-      .from(lakeMessage)
-      .where(eq(lakeMessage.clerkId, userId))
-      .limit(1);
+      .from(lakeNotes)
+      .where(eq(lakeNotes.clerkId, userId))
+      .orderBy(asc(lakeNotes.createdAt), asc(lakeNotes.id));
 
-    const lastOpenedOn = normalizeDateColumn(status?.lastOpenedOn);
+    // [Todo] limit the return amount for notesForUser
 
-    if (lastOpenedOn === todayKey) {
+    if (notesForUser.length === 0) {
       return NextResponse.json({ memory: null }, { status: 200 });
     }
 
-    const memoriesForUser = await db
-      .select()
-      .from(lakeMessages)
-      .where(eq(lakeMessages.clerkId, userId))
-      .orderBy(asc(lakeMessages.createdAt), asc(lakeMessages.id));
-
-    if (memoriesForUser.length === 0) {
-      return NextResponse.json({ memory: null }, { status: 200 });
-    }
-
-    const chosen = pickDeterministicMemory(memoriesForUser, userId, todayKey);
-
-    await db
-      .insert(lakeMessage)
-      .values({
-        clerkId: userId,
-        lastOpenedOn: todayKey,
-      })
-      .onConflictDoUpdate({
-        target: lakeMessage.clerkId,
-        set: {
-          lastOpenedOn: todayKey,
-          updatedAt: new Date(),
-        },
-      });
+    const chosen = pickDeterministicMemory(notesForUser, userId, todayDate);
 
     return NextResponse.json(
       {
@@ -153,7 +110,7 @@ export async function GET() {
       { status: 200 }
     );
   } catch (err) {
-    console.error("Unexpected error retrieving lake memory", err);
+    console.error("Unexpected error retrieving lake note", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
@@ -177,11 +134,9 @@ export async function DELETE(req: NextRequest) {
     }
 
     const deleted = await db
-      .delete(lakeMessages)
-      .where(
-        and(eq(lakeMessages.id, memoryId), eq(lakeMessages.clerkId, userId))
-      )
-      .returning({ id: lakeMessages.id });
+      .delete(lakeNotes)
+      .where(and(eq(lakeNotes.id, memoryId), eq(lakeNotes.clerkId, userId)))
+      .returning({ id: lakeNotes.id });
 
     if (deleted.length === 0) {
       return NextResponse.json(

@@ -52,7 +52,6 @@ export function TimeCapsuleCreateModal() {
       setFormValues(initialForm);
       setError(null);
       dialogRef.current?.close();
-      openButtonRef.current?.focus();
     }
 
     return () => document.removeEventListener("keydown", onKeyDown);

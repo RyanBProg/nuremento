@@ -1,0 +1,49 @@
+{
+  "memories": [
+    {
+      "title": "First day in Norway",
+      "description": "Wow was this place beautiful!",
+      "occurred_on": "2025-10-02",
+      "location": "Norway",
+      "mood": "Cold",
+      "image_key": "",
+      "image_thumbnail_key": ""
+    },
+    {
+      "title": "Safari",
+      "description": "Our family trip to kenya on a safari. We saw some much wildlife.",
+      "occurred_on": "2023-02-09",
+      "location": "Kenya",
+      "mood": "Amazed",
+      "image_key": "",
+      "image_thumbnail_key": ""
+    },
+    {
+      "title": "Moving into our first home",
+      "description": "It may of been a little run down but it was ours. I can't wait to see the kids grow up in this.",
+      "occurred_on": "2019-07-11",
+      "location": "Wembley",
+      "mood": "Excited",
+      "image_key": "",
+      "image_thumbnail_key": ""
+    },
+    {
+      "title": "Peanut's first day at the beach",
+      "description": "He was really scared of the waves at first, but he soon warmed up. In the end we couldn't get him out!",
+      "occurred_on": "2022-03-08",
+      "location": "Fremantle",
+      "mood": "Wet",
+      "image_key": "",
+      "image_thumbnail_key": ""
+    },
+    {
+      "title": "Family beach walk",
+      "description": "Watching the sunset together as a family",
+      "occurred_on": "2023-01-04",
+      "location": "Scarborough",
+      "mood": "Happy",
+      "image_key": "",
+      "image_thumbnail_key": ""
+    }
+  ]
+}

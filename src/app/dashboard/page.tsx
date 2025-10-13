@@ -4,16 +4,12 @@ import { DailyMemoryCard } from "@/components/memories/DailyMemoryCard";
 import { TimeCapsulesDashboardSection } from "@/components/time-capsule/TimeCapsulesDashboardSection";
 import { RecentMemoriesSection } from "@/components/memories/RecentMemoriesSection";
 import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
-// import { ensureUserForClerkAccount } from "@/db/users";
 
 export default async function Home() {
   const user = await currentUser();
   if (!user) {
     return null;
   }
-
-  // await ensureUserForClerkAccount(user);
-
   const displayName =
     user.firstName || user.fullName || user.username || "there";
 

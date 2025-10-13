@@ -32,9 +32,9 @@ export function SiteHeader() {
               My Memories
             </Link>
             <Link
-              href="/memory-lake"
+              href="/note-lake"
               className="hidden md:inline button button-plain">
-              Memory Lake
+              Note Lake
             </Link>
           </SignedIn>
           <SignedOut>
