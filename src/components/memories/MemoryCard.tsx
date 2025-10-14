@@ -5,7 +5,6 @@ type MemoryCardProps = {
   subtitle?: string | null;
   description?: string | null;
   thumbnailUrl?: string | null;
-  thumbnailFallback?: ReactNode;
   actions?: ReactNode;
   className?: string;
 };
@@ -15,7 +14,6 @@ export function MemoryCard({
   subtitle,
   description,
   thumbnailUrl,
-  thumbnailFallback,
   actions,
   className,
 }: MemoryCardProps) {
@@ -32,9 +30,13 @@ export function MemoryCard({
             className="h-full w-full object-cover"
           />
         </div>
-      ) : thumbnailFallback ? (
-        <div className="aspect-square w-full">{thumbnailFallback}</div>
-      ) : null}
+      ) : (
+        <div className="aspect-square w-full">
+          <div className="flex h-full w-full items-center justify-center rounded-lg border text-sm text-neutral-600">
+            No photo added
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 space-y-2">
         {subtitle ? (

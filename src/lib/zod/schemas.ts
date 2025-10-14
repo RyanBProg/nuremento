@@ -1,4 +1,5 @@
 import z from "zod";
+import { isMoodOption } from "../moods";
 
 const MAX_TITLE_LENGTH = 120;
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -103,7 +104,20 @@ export const metadataSchema = z.object({
   ),
   occurredOn: optionalDateString,
   location: optionalLimitedString(MAX_LOCATION_LENGTH, "Location"),
-  mood: optionalLimitedString(MAX_MOOD_LENGTH, "Mood"),
+  mood: optionalLimitedString(MAX_MOOD_LENGTH, "Mood").superRefine(
+    (value, ctx) => {
+      if (!value) {
+        return;
+      }
+
+      if (!isMoodOption(value)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Please select a valid mood option.",
+        });
+      }
+    }
+  ),
 });
 
 export const aiDescriptionInput = z.object({

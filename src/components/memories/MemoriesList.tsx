@@ -291,11 +291,6 @@ export function MemoriesList({ initialMemories }: MemoriesListProps) {
                       subtitle={subtitleParts.join(" • ")}
                       description={memory.description}
                       thumbnailUrl={memory.thumbnailUrl}
-                      thumbnailFallback={
-                        <div className="flex h-full w-full items-center justify-center rounded-lg border text-sm text-neutral-600">
-                          No photo added
-                        </div>
-                      }
                       actions={
                         <div className="mt-auto flex w-full gap-2">
                           <MemoryFormModal memory={formData} mode="edit" />

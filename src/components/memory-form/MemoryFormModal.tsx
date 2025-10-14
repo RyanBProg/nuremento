@@ -12,6 +12,7 @@ import {
   SUPPORTED_IMAGE_MIME_TYPES_TEXT,
 } from "@/lib/constants";
 import { Sparkles } from "lucide-react";
+import { MOOD_OPTIONS, isMoodOption } from "@/lib/moods";
 
 const emptyForm = {
   title: "",
@@ -57,6 +58,11 @@ export default function MemoryFormModal({ mode, memory }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+
+  const moodOptions =
+    formValues.mood && !isMoodOption(formValues.mood)
+      ? [formValues.mood, ...MOOD_OPTIONS]
+      : MOOD_OPTIONS;
 
   const isEditing = Boolean(memory?.id);
 
@@ -193,12 +199,16 @@ export default function MemoryFormModal({ mode, memory }: Props) {
     setError(null);
 
     try {
+      const selectedMood = isMoodOption(formValues.mood)
+        ? formValues.mood
+        : null;
+
       const metadata = {
         title: trimmedTitle,
         description: trimmedDescription,
         occurredOn: formValues.occurredOn ? formValues.occurredOn : null,
         location: formValues.location.trim() || null,
-        mood: formValues.mood.trim() || null,
+        mood: selectedMood,
       };
 
       const submission = new FormData();
@@ -423,16 +433,21 @@ export default function MemoryFormModal({ mode, memory }: Props) {
                   Mood (optional)
                   <span className="font-light">
                     {" "}
-                    - one or two words to capture the feeling
+                    - choose a word that best captures the feeling
                   </span>
                 </span>
-                <input
+                <select
                   name="mood"
-                  type="text"
                   value={formValues.mood}
                   onChange={(event) => handleChange("mood", event.target.value)}
-                  className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2"
-                />
+                  className="w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2">
+                  <option value="">Select a mood</option>
+                  {moodOptions.map((mood) => (
+                    <option key={mood} value={mood}>
+                      {mood}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
 
