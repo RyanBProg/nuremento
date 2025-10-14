@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -7,6 +8,23 @@ import { MemoriesList } from "@/components/memories/MemoriesList";
 import { resolveThumbnailUrl } from "@/lib/aws/resolveThumbnailUrl";
 import { formatDate } from "@/lib/utils";
 import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
+
+export const metadata: Metadata = {
+  title: "Your Memories | Nuremento",
+  description:
+    "Browse, edit, and organize the memories you've captured inside Nuremento.",
+  openGraph: {
+    title: "Your Memories | Nuremento",
+    description:
+      "Browse, edit, and organize the memories you've captured inside Nuremento.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Your Memories | Nuremento",
+    description:
+      "Browse, edit, and organize the memories you've captured inside Nuremento.",
+  },
+};
 
 export default async function MemoriesPage() {
   const { userId } = await auth();

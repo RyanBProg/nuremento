@@ -1,9 +1,27 @@
+import type { Metadata } from "next";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { DailyMemoryCard } from "@/components/memories/DailyMemoryCard";
 import { TimeCapsulesDashboardSection } from "@/components/time-capsule/TimeCapsulesDashboardSection";
 import { RecentMemoriesSection } from "@/components/memories/RecentMemoriesSection";
 import MemoryFormModal from "@/components/memory-form/MemoryFormModal";
+
+export const metadata: Metadata = {
+  title: "Dashboard | Nuremento",
+  description:
+    "See your recent memories, open time capsules, and capture new reflections from the Nuremento dashboard.",
+  openGraph: {
+    title: "Dashboard | Nuremento",
+    description:
+      "Browse recent memories, manage time capsules, and reflect on your stories.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Dashboard | Nuremento",
+    description:
+      "Browse recent memories, manage time capsules, and reflect on your stories.",
+  },
+};
 
 export default async function Home() {
   const user = await currentUser();

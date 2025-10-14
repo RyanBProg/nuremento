@@ -1,7 +1,36 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { TimeCapsuleShowcase } from "@/components/time-capsule/TimeCapsuleShowcase";
+
+export const metadata: Metadata = {
+  title: "Nuremento | Preserve the moments that matter",
+  description:
+    "Nuremento helps you log memories, send notes to your future self, and revisit stories through mindful experiences like the Note Lake and time capsules.",
+  openGraph: {
+    title: "Nuremento | Preserve the moments that matter",
+    description:
+      "Capture memories, send future letters, and revisit stories with Note Lake and time capsules.",
+    url: "https://nuremento.com",
+    siteName: "Nuremento",
+    images: [
+      {
+        url: "/images/memory-card.png",
+        width: 1200,
+        height: 630,
+        alt: "Nuremento memory card illustration",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nuremento | Preserve the moments that matter",
+    description:
+      "Capture memories, send future letters, and revisit stories with Note Lake and time capsules.",
+    images: ["/images/memory-card.png"],
+  },
+};
 
 export default async function Home() {
   const { userId } = await auth();

@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
   type DeleteObjectsCommandInput,
+  type PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -49,9 +50,7 @@ export function getBucketName() {
   return resolveBucketName();
 }
 
-export async function putObject(
-  params: Parameters<typeof PutObjectCommand>[0]
-) {
+export async function putObject(params: PutObjectCommandInput) {
   const client = getS3Client();
   await client.send(new PutObjectCommand(params));
 }
