@@ -2,7 +2,7 @@
 
 Mindful memory keeping for the modern web.
 
-Nuremento is a full-stack Next.js application that helps people capture, revisit, and celebrate meaningful moments. It blends traditional journaling with playful experiences—floating messages in a note lake, sealing letters inside time capsules, and enhancing stories with AI-generated prose.
+Nuremento is a full-stack application that helps people capture, revisit, and celebrate meaningful memories. It blends traditional journaling with playful experiences, floating your messages in a note lake, sealing letters inside time capsules for your future self, and enhancing your stories with AI-generated text.
 
 ---
 
@@ -94,6 +94,7 @@ Nuremento is a full-stack Next.js application that helps people capture, revisit
 | `AWS_BUCKET_NAME`                                     | S3 bucket where images are stored.                    |
 | `AWS_USER_ACCESS_KEY` & `AWS_USER_SECRET_KEY`         | Credentials for uploads/thumbnails.                   |
 | `GEMINI_API_KEY`                                      | (Optional) Enables the AI description helper.         |
+| `UPSTASH_REDIS_REST_URL` & `UPSTASH_REDIS_REST_TOKEN` | Required for rate limiting via Upstash Redis.         |
 
 ---
 

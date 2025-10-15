@@ -11,6 +11,7 @@ import { getS3Client } from "@/lib/aws/s3Client";
 import { optimiseImage } from "@/lib/sharp/optimiseImage";
 import { metadataSchema } from "@/lib/zod/schemas";
 import { createSignedUrlForKey } from "@/lib/storage";
+import { checkMemoriesRateLimit } from "@/lib/rate-limit";
 import {
   MAX_IMAGE_BYTES,
   MAX_IMAGE_BYTES_TEXT,
@@ -62,6 +63,28 @@ export async function POST(req: NextRequest) {
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = await checkMemoriesRateLimit(userId);
+
+    if (!rateLimit.success) {
+      const retryAfterSeconds = Math.max(
+        0,
+        Math.ceil((rateLimit.reset - Date.now()) / 1000)
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "You've reached the limit for logging memories. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": retryAfterSeconds.toString(),
+          },
+        }
+      );
     }
 
     const contentType = req.headers.get("content-type") ?? "";

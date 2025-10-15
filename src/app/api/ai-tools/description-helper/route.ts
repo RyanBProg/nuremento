@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { aiDescriptionInput } from "@/lib/zod/schemas";
 import z from "zod";
+import { checkAiToolsRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +12,28 @@ export async function POST(req: NextRequest) {
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = await checkAiToolsRateLimit(userId);
+
+    if (!rateLimit.success) {
+      const retryAfterSeconds = Math.max(
+        0,
+        Math.ceil((rateLimit.reset - Date.now()) / 1000)
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "You've reached the limit for AI rewrites. Please try again shortly.",
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": retryAfterSeconds.toString(),
+          },
+        }
+      );
     }
 
     const body = await req.json();
