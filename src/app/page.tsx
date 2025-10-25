@@ -41,7 +41,7 @@ export default async function Home() {
 
   return (
     <div>
-      <section className="h-[calc(100vh-70px)] border-b overflow-clip flex justify-center items-center">
+      <section className="min-h-[calc(100vh-70px)] border-b overflow-clip flex justify-center items-center">
         <div className="py-10 px-4 xs:px-8 max-w-3xl">
           <div className="flex flex-col items-center gap-10">
             <Image
@@ -56,7 +56,7 @@ export default async function Home() {
                 Your companion for meaningful recall
               </span>
               <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-                Hold onto and re-live memories in unquie ways.
+                Hold onto and re-live memories in unique ways.
               </h1>
               <p className="text-base text-neutral-600 leading-relaxed sm:text-lg">
                 Nuremento gives you a place to chronicle your memories, and
@@ -74,7 +74,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative border-b h-[calc(100vh-70px)] sm:h-[500px] overflow-clip">
+      <section className="relative border-b min-h-[calc(100vh-70px)] sm:h-[500px] overflow-clip">
         <Image
           src="/images/memory-lake-banner.png"
           alt="memory lake"

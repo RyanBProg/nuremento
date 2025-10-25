@@ -300,7 +300,7 @@ export function NoteLakeClient() {
               )}
             </>
           ) : (
-            <div className="absolute z-20 top-0 inset-x-0 p-4 rounded bg-white/30">
+            <div className="absolute z-20 bottom-0 inset-x-0 p-4 rounded bg-white/30">
               <p className="text-center">
                 Sign in to add messages to your lake
               </p>
