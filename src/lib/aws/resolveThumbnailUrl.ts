@@ -1,5 +1,5 @@
 import { memories } from "@/db/schema";
-import { createSignedUrlForKey } from "@/lib/storage";
+import { createSignedUrlForKey } from "@/lib/aws/storage";
 
 export async function resolveThumbnailUrl(
   memory: typeof memories.$inferSelect

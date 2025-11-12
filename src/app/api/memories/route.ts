@@ -12,7 +12,7 @@ import {
   createSignedUrlForKey,
   cleanupUploads,
   resolveBucketName,
-} from "@/lib/storage";
+} from "@/lib/aws/storage";
 import { optimiseImage } from "@/lib/sharp/optimiseImage";
 import { metadataSchema } from "@/lib/zod/schemas";
 import { checkMemoriesRateLimit } from "@/lib/rate-limit";
