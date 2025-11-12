@@ -17,8 +17,12 @@ function pickDeterministicNote(
   userId: string,
   dayKey: string
 ): LakeNoteRow {
-  const hash = createHash("sha256").update(`${userId}:${dayKey}`).digest();
-  const index = hash.readUInt32BE(0) % items.length;
+  const hashHex = createHash("sha256")
+    .update(`${userId}:${dayKey}`)
+    .digest("hex");
+
+  const bigIntHash = BigInt("0x" + hashHex);
+  const index = Number(bigIntHash % BigInt(items.length));
 
   return items[index];
 }
