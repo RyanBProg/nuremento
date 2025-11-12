@@ -1,4 +1,12 @@
-import { format } from "date-fns";
+import {
+  format,
+  startOfDay,
+  differenceInCalendarDays,
+  isBefore,
+  isValid,
+  parseISO,
+} from "date-fns";
+import { MAX_TIMECAPSULE_FUTURE_DAYS } from "@/lib/constants";
 
 export function formatDate(value: string | Date | null): string {
   if (!value) {
@@ -18,44 +26,31 @@ export function formatDate(value: string | Date | null): string {
   }).format(date);
 }
 
-export function formatDateOnly(value: string) {
-  const date = toDate(value);
-  if (!date) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date);
+export function getTodaysDate() {
+  return format(startOfDay(new Date()), "yyyy-MM-dd");
 }
 
-function toDate(value: string) {
-  if (!value) {
-    return null;
-  }
-  const date = value.includes("T")
-    ? new Date(value)
-    : new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-  return date;
-}
-
-export function normalizeTimestampToDate(value: unknown) {
-  if (!value) {
-    return null;
+export function parseAndValidateOpenDate(raw: unknown) {
+  if (typeof raw !== "string") {
+    return { error: "openOn must be an ISO date string." };
   }
 
-  if (typeof value === "string") {
-    return value.slice(0, 10);
+  const openDate = parseISO(raw);
+
+  if (!isValid(openDate)) {
+    return { error: "openOn is not a valid date." };
   }
 
-  if (value instanceof Date) {
-    return format(value, "yyyy-MM-dd");
+  const now = new Date();
+  const earliestAllowed = startOfDay(now);
+
+  if (isBefore(openDate, earliestAllowed)) {
+    return { error: "openOn must be today or later." };
   }
 
-  return null;
+  if (differenceInCalendarDays(openDate, now) > MAX_TIMECAPSULE_FUTURE_DAYS) {
+    return { error: "openOn cannot be more than six months away." };
+  }
+
+  return { date: openDate };
 }

@@ -1,10 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
-import { format, startOfDay } from "date-fns";
+import { getTodaysDate } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { and, asc, eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import z from "zod";
-
 import { db } from "@/db/client";
 import { lakeNotes } from "@/db/schema";
 import { lakeMessageData } from "@/lib/zod/schemas";
@@ -12,10 +11,6 @@ import { lakeMessageData } from "@/lib/zod/schemas";
 export const runtime = "nodejs";
 
 type LakeNoteRow = typeof lakeNotes.$inferSelect;
-
-function getTodayDate() {
-  return format(startOfDay(new Date()), "yyyy-MM-dd");
-}
 
 function pickDeterministicNote(
   items: LakeNoteRow[],
@@ -83,7 +78,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const todayDate = getTodayDate();
+    const todayDate = getTodaysDate();
 
     const notesForUser = await db
       .select()
@@ -123,8 +118,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const noteId = searchParams.get("id");
+    const noteId = req.nextUrl.searchParams.get("id");
 
     if (!noteId) {
       return NextResponse.json(

@@ -1,6 +1,6 @@
 import { TimeCapsuleOpenModal } from "./TimeCapsuleOpenModal";
 import { TimeCapsuleSummary } from "./TimeCapsulesPanel";
-import { formatDateOnly } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 type TimeCapsuleProps = {
   capsule: TimeCapsuleSummary;
@@ -73,7 +73,7 @@ export default function TimeCapsule({
             {capsule.title}
           </h4>
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-600">
-            {formatDateOnly(capsule.openOn)}
+            {formatDate(capsule.openOn)}
           </p>
         </div>
       )}

@@ -10,3 +10,6 @@ export const SUPPORTED_IMAGE_MIME_TYPES = new Set([
 ]);
 
 export const SUPPORTED_IMAGE_MIME_TYPES_TEXT = "jpeg, png, webp, heic, heif";
+
+export const MAX_USER_TIMECAPSULE_QTY = 10;
+export const MAX_TIMECAPSULE_FUTURE_DAYS = 183; // ~6 months

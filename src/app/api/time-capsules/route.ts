@@ -1,46 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
-import {
-  differenceInCalendarDays,
-  isBefore,
-  isValid,
-  parseISO,
-  startOfDay,
-} from "date-fns";
+import { isBefore, parseISO, startOfDay } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { timeCapsules } from "@/db/schema";
 import { timeCapsuleData } from "@/lib/zod/schemas";
 import z from "zod";
+import { MAX_USER_TIMECAPSULE_QTY } from "@/lib/constants";
+import { parseAndValidateOpenDate } from "@/lib/utils";
 
-const MAX_FUTURE_DAYS = 183; // ~6 months
-
-function parseAndValidateOpenDate(raw: unknown) {
-  if (typeof raw !== "string") {
-    return { error: "openOn must be an ISO date string." } as const;
-  }
-
-  const openDate = parseISO(raw);
-
-  if (!isValid(openDate)) {
-    return { error: "openOn is not a valid date." } as const;
-  }
-
-  const now = new Date();
-  const earliestAllowed = startOfDay(now);
-
-  if (isBefore(openDate, earliestAllowed)) {
-    return { error: "openOn must be today or later." } as const;
-  }
-
-  if (differenceInCalendarDays(openDate, now) > MAX_FUTURE_DAYS) {
-    return { error: "openOn cannot be more than six months away." } as const;
-  }
-
-  return { date: openDate } as const;
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
 
@@ -53,9 +22,11 @@ export async function POST(request: NextRequest) {
       .from(timeCapsules)
       .where(eq(timeCapsules.clerkId, userId));
 
-    if (Number(count ?? 0) >= 10) {
+    if (Number(count ?? 0) >= MAX_USER_TIMECAPSULE_QTY) {
       return NextResponse.json(
-        { error: "You have reached the maximum of 10 time capsules." },
+        {
+          error: `You have reached the maximum of ${MAX_USER_TIMECAPSULE_QTY} time capsules.`,
+        },
         { status: 400 }
       );
     }
@@ -63,7 +34,7 @@ export async function POST(request: NextRequest) {
     let body: unknown;
 
     try {
-      body = await request.json();
+      body = await req.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON body." },
@@ -110,7 +81,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
 
@@ -118,8 +89,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const capsuleId = searchParams.get("id");
+    const capsuleId = req.nextUrl.searchParams.get("id");
 
     if (!capsuleId) {
       return NextResponse.json(
@@ -184,8 +154,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const capsuleId = searchParams.get("id");
+    const capsuleId = req.nextUrl.searchParams.get("id");
 
     if (!capsuleId) {
       return NextResponse.json(
