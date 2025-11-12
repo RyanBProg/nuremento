@@ -6,108 +6,23 @@ import { useAuth } from "@clerk/nextjs";
 import MessageModal from "@/components/MessageModal";
 import { NoteLakeCreateModal } from "@/components/memory-lake/NoteLakeCreateModal";
 import styles from "./LakeScene.module.css";
-
-type LakeNoteResponse = {
-  note: {
-    id: string;
-    title: string;
-    message: string;
-    createdAt?: string | null;
-  } | null;
-};
-
-type LakeNote = {
-  id: string;
-  title: string;
-  message: string;
-  createdAt: string;
-};
-
-const defaultNote: LakeNote = {
-  id: "demo",
-  title: "Tide-carried note",
-  message:
-    "Add notes to your lake and enjoy opening wonderful messages from your past self.",
-  createdAt: new Date().toISOString().slice(0, 10),
-};
+import { useDailyBottle } from "@/hooks/useDailyBottle";
 
 export function NoteLakeClient() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isSignedIn } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const [dailyBottle, setDailyBottle] = useState<LakeNote | null>(null);
   const [dailyOpen, setDailyOpen] = useState(false);
-  const [isLoadingBottle, setIsLoadingBottle] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
-
-    if (!isSignedIn) {
-      setDailyBottle(defaultNote);
-      setIsLoadingBottle(false);
-      setDeleteError(null);
-      return;
-    }
-
-    let cancelled = false;
-
-    async function loadDailyBottle() {
-      setIsLoadingBottle(true);
-      setDeleteError(null);
-
-      try {
-        const response = await fetch("/api/lake-notes");
-
-        if (!response.ok) {
-          console.error("Failed to fetch lake note", response.status);
-          if (!cancelled) {
-            setDailyBottle(null);
-          }
-          return;
-        }
-
-        const payload = (await response.json()) as LakeNoteResponse;
-
-        if (cancelled) {
-          return;
-        }
-
-        if (payload.note) {
-          setDailyBottle({
-            id: payload.note.id,
-            title: payload.note.title,
-            message: payload.note.message,
-            createdAt:
-              payload.note.createdAt ?? new Date().toISOString().slice(0, 10),
-          });
-        } else {
-          setDailyBottle(null);
-        }
-      } catch (error) {
-        console.error("Error fetching lake note", error);
-        if (!cancelled) {
-          setDailyBottle(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoadingBottle(false);
-        }
-      }
-    }
-
-    setDailyBottle(null);
-    loadDailyBottle();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isLoaded, isSignedIn]);
+  const {
+    dailyBottle,
+    isLoading: isLoadingBottle,
+    isDeleting: isDeletingBottle,
+    error: BottleError,
+    refetch: refetchBottle,
+    deleteBottle,
+  } = useDailyBottle();
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -160,46 +75,6 @@ export function NoteLakeClient() {
       setDailyOpen(false);
     }
   }, [dailyBottle]);
-
-  const handleDelete = async () => {
-    if (!dailyBottle) {
-      return;
-    }
-
-    if (!isSignedIn) {
-      setDailyOpen(false);
-      return;
-    }
-
-    setIsDeleting(true);
-    setDeleteError(null);
-
-    try {
-      const response = await fetch(`/api/lake-notes?id=${dailyBottle.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as {
-          error?: unknown;
-        } | null;
-        const message =
-          typeof payload?.error === "string"
-            ? payload.error
-            : "We could not delete this note. Please try again.";
-        setDeleteError(message);
-        return;
-      }
-
-      setDailyBottle(null);
-      setDailyOpen(false);
-    } catch (error) {
-      console.error("Error deleting lake note", error);
-      setDeleteError("We could not delete this note. Please try again.");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <>
@@ -254,7 +129,7 @@ export function NoteLakeClient() {
         {!isLoadingBottle &&
           (isSignedIn ? (
             <>
-              <NoteLakeCreateModal />
+              <NoteLakeCreateModal refetchBottle={refetchBottle} />
               {!dailyBottle && (
                 <div className="absolute z-20 bottom-0 inset-x-0 p-4 rounded bg-white/30 flex justify-center items-center gap-2">
                   <ArrowUp size={14} />
@@ -335,7 +210,6 @@ export function NoteLakeClient() {
             <button
               type="button"
               onClick={() => {
-                setDeleteError(null);
                 setDailyOpen(true);
               }}
               className={`${styles.washedBottle} ${styles.washedBottleGlow}`}
@@ -366,8 +240,8 @@ export function NoteLakeClient() {
           <p className="relative mt-4 text-xs uppercase tracking-wider text-slate-400">
             Bottled {dailyBottle.createdAt}
           </p>
-          {deleteError ? (
-            <p className="relative mt-4 text-sm text-red-500">{deleteError}</p>
+          {BottleError ? (
+            <p className="relative mt-4 text-sm text-red-500">{BottleError}</p>
           ) : null}
           <div className="relative mt-6 flex justify-end gap-3">
             <button
@@ -380,9 +254,9 @@ export function NoteLakeClient() {
               <button
                 type="button"
                 className="relative button button-filled"
-                onClick={handleDelete}
-                disabled={isDeleting}>
-                {isDeleting ? "Deleting..." : "Delete"}
+                onClick={deleteBottle}
+                disabled={isDeletingBottle}>
+                {isDeletingBottle ? "Deleting..." : "Delete"}
               </button>
             )}
           </div>

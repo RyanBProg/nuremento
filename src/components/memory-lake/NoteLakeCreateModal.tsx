@@ -1,7 +1,6 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
 type NoteLakeForm = {
@@ -14,12 +13,15 @@ const initialForm: NoteLakeForm = {
   message: "",
 };
 
-export function NoteLakeCreateModal() {
+export function NoteLakeCreateModal({
+  refetchBottle,
+}: {
+  refetchBottle: () => Promise<void>;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [formValues, setFormValues] = useState<NoteLakeForm>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const openButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -91,7 +93,7 @@ export function NoteLakeCreateModal() {
 
       setFormValues(initialForm);
       setIsOpen(false);
-      router.refresh();
+      refetchBottle();
     } catch (err) {
       console.error(err);
       setError("We could not save this note. Please try again.");
