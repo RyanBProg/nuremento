@@ -34,8 +34,8 @@ const defaultNote: LakeNote = {
 export function NoteLakeClient() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const { isLoaded, isSignedIn } = useAuth();
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [dailyBottle, setDailyBottle] = useState<LakeNote | null>(null);
   const [dailyOpen, setDailyOpen] = useState(false);
@@ -111,58 +111,25 @@ export function NoteLakeClient() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-
-    setIsPlaying(!audio.paused);
-    setIsMuted(audio.muted);
-    setVolume(audio.volume);
-
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-
-    audio.addEventListener("play", handlePlay);
-    audio.addEventListener("pause", handlePause);
-
-    audio.volume = volume;
+    if (!audio) return;
     audio.muted = isMuted;
-
-    return () => {
-      audio.removeEventListener("play", handlePlay);
-      audio.removeEventListener("pause", handlePause);
-    };
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-    audio.muted = isMuted;
-    if (isMuted && !audio.paused) {
-      setIsPlaying(true);
-    }
-  }, [isMuted]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
     audio.volume = volume;
-  }, [volume]);
+  }, [isMuted, volume]);
 
-  const togglePlayback = () => {
+  const togglePlayback = async () => {
     const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
+    if (!audio) return;
 
     if (audio.paused) {
-      void audio.play();
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.error("Playback failed:", err);
+      }
     } else {
       audio.pause();
+      setIsPlaying(false);
     }
   };
 
@@ -242,9 +209,8 @@ export function NoteLakeClient() {
             <audio
               ref={audioRef}
               src="/sounds/forest-audio.mp3"
-              autoPlay
               loop
-              muted
+              playsInline
             />
             <div
               className={styles.audioControls}
