@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
@@ -7,10 +7,14 @@ import { fileTypeFromBuffer } from "file-type";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { memories } from "@/db/schema";
-import { getS3Client } from "@/lib/aws/s3Client";
+import {
+  getS3Client,
+  createSignedUrlForKey,
+  cleanupUploads,
+  resolveBucketName,
+} from "@/lib/storage";
 import { optimiseImage } from "@/lib/sharp/optimiseImage";
 import { metadataSchema } from "@/lib/zod/schemas";
-import { createSignedUrlForKey } from "@/lib/storage";
 import { checkMemoriesRateLimit } from "@/lib/rate-limit";
 import {
   MAX_IMAGE_BYTES,
@@ -20,30 +24,6 @@ import {
 } from "@/lib/constants";
 
 export const runtime = "nodejs";
-
-const bucketName = process.env.AWS_BUCKET_NAME;
-
-if (!bucketName) {
-  throw new Error("AWS_BUCKET_NAME is not configured.");
-}
-
-async function cleanupUploads(keys: string[]) {
-  if (keys.length === 0) {
-    return;
-  }
-
-  const client = getS3Client();
-
-  await client.send(
-    new DeleteObjectsCommand({
-      Bucket: bucketName,
-      Delete: {
-        Objects: keys.map((Key) => ({ Key })),
-        Quiet: true,
-      },
-    })
-  );
-}
 
 type MemoryRow = typeof memories.$inferSelect;
 
@@ -68,22 +48,12 @@ export async function POST(req: NextRequest) {
     const rateLimit = await checkMemoriesRateLimit(userId);
 
     if (!rateLimit.success) {
-      const retryAfterSeconds = Math.max(
-        0,
-        Math.ceil((rateLimit.reset - Date.now()) / 1000)
-      );
-
       return NextResponse.json(
         {
           error:
             "You've reached the limit for logging memories. Please try again later.",
         },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": retryAfterSeconds.toString(),
-          },
-        }
+        { status: 429 }
       );
     }
 
@@ -141,6 +111,7 @@ export async function POST(req: NextRequest) {
       imageFile = imageEntry;
     }
 
+    const bucketName = resolveBucketName();
     const s3 = getS3Client();
     const memoryId = randomUUID();
     const uploadedKeys: string[] = [];
@@ -349,6 +320,7 @@ export async function PUT(req: NextRequest) {
       imageFile = imageEntry;
     }
 
+    const bucketName = resolveBucketName();
     const s3 = getS3Client();
     const uploadedKeys: string[] = [];
     let imageKey = existing.imageKey;

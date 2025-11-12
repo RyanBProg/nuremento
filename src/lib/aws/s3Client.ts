@@ -8,10 +8,10 @@ export function getS3Client() {
     throw new Error("AWS_REGION is not configured.");
   }
   if (!accessKeyId) {
-    throw new Error("AWS_REGION is not configured.");
+    throw new Error("ACCESS_KEY is not configured.");
   }
   if (!secretAccessKey) {
-    throw new Error("AWS_REGION is not configured.");
+    throw new Error("SECRET_KEY is not configured.");
   }
 
   return new S3Client({

@@ -1,16 +1,13 @@
 import {
   DeleteObjectsCommand,
   GetObjectCommand,
-  PutObjectCommand,
   S3Client,
-  type DeleteObjectsCommandInput,
-  type PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 let cachedClient: S3Client | null = null;
 
-function resolveBucketName() {
+export function resolveBucketName() {
   const bucket = process.env.AWS_BUCKET_NAME;
   if (!bucket) {
     throw new Error("AWS_BUCKET_NAME is not configured.");
@@ -26,7 +23,7 @@ function resolveCredentials() {
     throw new Error("AWS credentials are not configured.");
   }
 
-  return { accessKeyId, secretAccessKey } as const;
+  return { accessKeyId, secretAccessKey };
 }
 
 export function getS3Client() {
@@ -46,31 +43,38 @@ export function getS3Client() {
   return cachedClient;
 }
 
-export function getBucketName() {
-  return resolveBucketName();
-}
-
-export async function putObject(params: PutObjectCommandInput) {
-  const client = getS3Client();
-  await client.send(new PutObjectCommand(params));
-}
-
-export async function deleteObjects(input: DeleteObjectsCommandInput) {
-  if (!input.Delete?.Objects?.length) {
-    return;
-  }
-
-  const client = getS3Client();
-  await client.send(new DeleteObjectsCommand(input));
-}
-
 export async function createSignedUrlForKey(
   key: string,
   expiresInSeconds = 300
 ) {
   const client = getS3Client();
-  const bucket = getBucketName();
+  const bucket = resolveBucketName();
 
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
   return getSignedUrl(client, command, { expiresIn: expiresInSeconds });
+}
+
+export async function cleanupUploads(keys: string[]) {
+  if (keys.length === 0) {
+    return;
+  }
+
+  const bucketName = resolveBucketName();
+
+  let client: S3Client | null = null;
+  if (cachedClient) {
+    client = cachedClient;
+  } else {
+    client = getS3Client();
+  }
+
+  await client.send(
+    new DeleteObjectsCommand({
+      Bucket: bucketName,
+      Delete: {
+        Objects: keys.map((Key) => ({ Key })),
+        Quiet: true,
+      },
+    })
+  );
 }
