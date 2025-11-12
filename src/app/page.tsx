@@ -50,6 +50,7 @@ export default async function Home() {
               alt="memory card"
               height={350}
               width={350}
+              priority
             />
             <div className="flex flex-col items-center text-center gap-6">
               <span className="border-y border-primary-light py-1 px-2 text-primary-dark inline-flex items-center justify-center text-xs font-semibold uppercase tracking-[0.2em]">
