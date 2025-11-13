@@ -1,5 +1,7 @@
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
+import { getS3Client, resolveBucketName } from "@/lib/aws/storage";
+import { DeleteObjectsCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
@@ -66,7 +68,30 @@ export async function POST(req: Request) {
       }
 
       try {
-        // [Todo] find and delete all s3 images for this account
+        const bucketName = resolveBucketName();
+        const s3Client = getS3Client();
+
+        const listCommand = new ListObjectsV2Command({
+          Bucket: bucketName,
+          Prefix: `${clerkId}/`,
+        });
+
+        const listedObjects = await s3Client.send(listCommand);
+
+        if (listedObjects.Contents && listedObjects.Contents.length > 0) {
+          await s3Client.send(
+            new DeleteObjectsCommand({
+              Bucket: bucketName,
+              Delete: {
+                Objects: listedObjects.Contents.map((obj) => ({
+                  Key: obj.Key!,
+                })),
+                Quiet: true,
+              },
+            })
+          );
+        }
+
         await db.delete(users).where(eq(users.clerkId, clerkId));
       } catch (error) {
         console.error("Error deleting user from Clerk webhook", error);
